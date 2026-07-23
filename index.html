@@ -15,11 +15,8 @@
 body{
 
 font-family:Arial,sans-serif;
-
 background:#f4f6f8;
-
 margin:0;
-
 padding:20px;
 
 }
@@ -30,15 +27,10 @@ padding:20px;
 .login-container{
 
 max-width:900px;
-
 margin:auto;
-
 background:white;
-
 padding:25px;
-
 border-radius:12px;
-
 box-shadow:0 3px 15px rgba(0,0,0,0.1);
 
 }
@@ -48,7 +40,6 @@ box-shadow:0 3px 15px rgba(0,0,0,0.1);
 .login-container{
 
 max-width:400px;
-
 margin:60px auto;
 
 }
@@ -66,9 +57,7 @@ text-align:center;
 label{
 
 display:block;
-
 font-weight:bold;
-
 margin-top:15px;
 
 }
@@ -79,15 +68,10 @@ input,
 select{
 
 width:100%;
-
 padding:10px;
-
 margin-top:5px;
-
 box-sizing:border-box;
-
 border:1px solid #ccc;
-
 border-radius:6px;
 
 }
@@ -96,7 +80,7 @@ border-radius:6px;
 
 input[readonly]{
 
-background:#eee;
+background:#eeeeee;
 
 }
 
@@ -105,9 +89,7 @@ background:#eee;
 table{
 
 width:100%;
-
 border-collapse:collapse;
-
 margin-top:25px;
 
 }
@@ -118,9 +100,7 @@ th,
 td{
 
 border:1px solid #ddd;
-
 padding:8px;
-
 text-align:center;
 
 }
@@ -146,21 +126,13 @@ background:#fff8dc;
 button{
 
 width:100%;
-
 padding:14px;
-
 margin-top:25px;
-
 border:none;
-
 border-radius:6px;
-
 background:#1976d2;
-
 color:white;
-
 font-size:17px;
-
 cursor:pointer;
 
 }
@@ -203,9 +175,7 @@ display:none;
 #loginMessage{
 
 text-align:center;
-
 font-weight:bold;
-
 margin-top:20px;
 
 }
@@ -215,9 +185,7 @@ margin-top:20px;
 .user-welcome{
 
 text-align:right;
-
 color:#555;
-
 margin-bottom:10px;
 
 }
@@ -240,8 +208,8 @@ padding:5px;
 
 }
 
-
 }
+
 
 
 </style>
@@ -283,6 +251,8 @@ autocomplete="username">
 
 
 
+
+
 <label>
 Password
 </label>
@@ -296,6 +266,8 @@ autocomplete="current-password">
 
 
 
+
+
 <button
 id="loginButton"
 onclick="loginUser()">
@@ -306,17 +278,13 @@ Login
 
 
 
+
 <div id="loginMessage">
 
 </div>
 
 
 </div>
-
-
-
-
-
 <!-- ========================= -->
 <!-- ORDER PAGE -->
 <!-- ========================= -->
@@ -328,17 +296,12 @@ Login
 <div class="container">
 
 
-
 <div class="user-welcome">
 
-Welcome
-
-<strong id="loggedInName">
-
-</strong>
+Welcome 
+<strong id="loggedInName"></strong>
 
 </div>
-
 
 
 
@@ -353,11 +316,9 @@ Logout
 
 
 
-
 <h1>
 Customer Order Form
 </h1>
-
 
 
 
@@ -392,7 +353,6 @@ readonly>
 
 
 
-
 <label>
 Contact No
 </label>
@@ -401,7 +361,6 @@ Contact No
 <input
 id="contact"
 readonly>
-
 
 
 
@@ -425,7 +384,6 @@ Order Details
 
 
 
-
 <table>
 
 
@@ -445,15 +403,12 @@ Order Details
 </thead>
 
 
-
 <tbody id="skuTable">
 
 </tbody>
 
 
-
 </table>
-
 
 
 
@@ -479,6 +434,11 @@ Submit Order
 
 
 </div>
+
+
+
+
+
 <script>
 
 
@@ -486,8 +446,11 @@ Submit Order
 // APPS SCRIPT URL
 // =====================================================
 
+
 const API_URL =
+
 "https://script.google.com/macros/s/AKfycbycaik6xQycLiRYZLe5-KeJqzguETBXDs4QHEZ-VvdEC3R6VS3WayqtqKcsX3EuyCXY/exec";
+
 
 
 
@@ -496,15 +459,19 @@ const API_URL =
 // SKU LIST
 // =====================================================
 
-const SKUS = [
+
+const SKUS=[
+
 
 "RG2.20G",
 "RG4.0G",
 "RG17.0G",
 "RG100.0G",
 
+
 "RGS2.20G",
 "RGM1.50G",
+
 
 "TZ0.25G",
 "TZ0.45G",
@@ -512,8 +479,10 @@ const SKUS = [
 "TZ10.0G",
 "TZ50.0G",
 
+
 "KH5.75G",
 "KH30.0G"
+
 
 ];
 
@@ -521,12 +490,41 @@ const SKUS = [
 
 
 
+
 // =====================================================
-// WHOLE CONVERSION
-// CHANGE VALUES AS PER PACKING
+// PACK SIZE
+// CHANGE AS PER YOUR PACKING
 // =====================================================
 
-let PACK_SIZE = {};
+
+let PACK_SIZE={
+
+
+"RG2.20G":20,
+"RG4.0G":20,
+"RG17.0G":20,
+"RG100.0G":20,
+
+
+"RGS2.20G":20,
+"RGM1.50G":20,
+
+
+"TZ0.25G":20,
+"TZ0.45G":20,
+"TZ4.25G":20,
+"TZ10.0G":20,
+"TZ50.0G":20,
+
+
+"KH5.75G":20,
+"KH30.0G":20
+
+
+};
+
+
+
 
 
 let clients=[];
@@ -539,56 +537,32 @@ let loggedInUser=null;
 
 
 // =====================================================
-// LOGIN USER USING JSONP
+// LOGIN USER
 // =====================================================
+
 
 function loginUser(){
 
 
-
-const username =
-document.getElementById(
-"username"
-)
-.value
-.trim();
+let username=
+document.getElementById("username").value.trim();
 
 
-
-const password =
-document.getElementById(
-"password"
-)
-.value
-.trim();
+let password=
+document.getElementById("password").value.trim();
 
 
 
-const message =
-document.getElementById(
-"loginMessage"
-);
+let message=
+document.getElementById("loginMessage");
 
 
 
-const button =
-document.getElementById(
-"loginButton"
-);
+if(username==="" || password===""){
 
 
-
-
-
-if(
-username==="" ||
-password===""
-){
-
-
-message.textContent =
-"Please enter username and password";
-
+message.innerHTML=
+"Enter username and password";
 
 return;
 
@@ -597,31 +571,17 @@ return;
 
 
 
-
-
-message.textContent =
+message.innerHTML=
 "Checking login...";
 
 
-button.disabled=true;
 
-
-
-
-
-const callbackName =
+const callbackName=
 "loginCallback_"+Date.now();
 
 
 
-
-
-
 window[callbackName]=function(result){
-
-
-
-try{
 
 
 if(result.success){
@@ -630,15 +590,11 @@ if(result.success){
 
 loggedInUser={
 
-username:
-result.username,
+username:result.username,
 
-name:
-result.name
+name:result.name
 
 };
-
-
 
 
 
@@ -646,45 +602,28 @@ sessionStorage.setItem(
 
 "rgLoggedInUser",
 
-JSON.stringify(
-loggedInUser
-)
+JSON.stringify(loggedInUser)
 
 );
 
 
 
 
-
-document
-.getElementById(
+document.getElementById(
 "loggedInName"
-)
-.textContent =
-result.name;
+).innerHTML=result.name;
 
 
 
-
-
-document
-.getElementById(
+document.getElementById(
 "loginPage"
-)
-.style.display="none";
+).style.display="none";
 
 
 
-
-
-document
-.getElementById(
+document.getElementById(
 "orderPage"
-)
-.style.display="block";
-
-
-
+).style.display="block";
 
 
 
@@ -694,95 +633,43 @@ loadClients();
 
 
 
-
-
 }
 
 else{
 
 
-message.textContent =
-result.message ||
-"Invalid login";
+message.innerHTML=
+result.message || "Invalid Login";
 
 
 }
 
-
-
-}
-
-catch(error){
-
-
-console.log(error);
-
-
-message.textContent =
-"Login error";
-
-
-}
-
-
-
-
-button.disabled=false;
-
-
-delete window[callbackName];
-
-
-
-};
-
-
-
-
-
-
-const script =
-document.createElement(
-"script"
-);
-
-
-
-
-
-script.src =
-
-API_URL +
-
-"?action=login" +
-
-"&username="+
-encodeURIComponent(username)+
-
-"&password="+
-encodeURIComponent(password)+
-
-"&callback="+
-callbackName;
-
-
-
-
-
-script.onerror=function(){
-
-
-message.textContent =
-"Unable to connect server";
-
-
-button.disabled=false;
 
 
 delete window[callbackName];
 
 
 };
+
+
+
+
+
+let script=document.createElement("script");
+
+
+
+script.src=
+
+API_URL+
+
+"?action=login"+
+
+"&username="+encodeURIComponent(username)+
+
+"&password="+encodeURIComponent(password)+
+
+"&callback="+callbackName;
 
 
 
@@ -798,68 +685,45 @@ document.body.appendChild(script);
 
 
 
-
-
-
 // =====================================================
 // CHECK SAVED LOGIN
 // =====================================================
 
 
-window.addEventListener(
-"load",
-function(){
+window.onload=function(){
 
 
-
-const saved =
+let saved=
 sessionStorage.getItem(
 "rgLoggedInUser"
 );
 
 
 
-
-
 if(saved){
 
 
-
-loggedInUser =
+loggedInUser=
 JSON.parse(saved);
 
 
 
-
-
-document
-.getElementById(
+document.getElementById(
 "loggedInName"
-)
-.textContent =
+).innerHTML=
 loggedInUser.name;
 
 
 
-
-
-document
-.getElementById(
+document.getElementById(
 "loginPage"
-)
-.style.display="none";
+).style.display="none";
 
 
 
-
-
-document
-.getElementById(
+document.getElementById(
 "orderPage"
-)
-.style.display="block";
-
-
+).style.display="block";
 
 
 
@@ -869,16 +733,11 @@ loadClients();
 
 
 
-
 }
 
 
 
-}
-
-);
-
-
+};
 
 
 
@@ -892,22 +751,24 @@ loadClients();
 function logoutUser(){
 
 
-
 sessionStorage.removeItem(
 "rgLoggedInUser"
 );
 
 
-
 location.reload();
-
 
 
 }
 
+
+
+
+
 // =====================================================
 // LOAD CUSTOMERS
 // =====================================================
+
 
 async function loadClients(){
 
@@ -915,71 +776,54 @@ async function loadClients(){
 try{
 
 
-const response =
+let response=
 await fetch(API_URL);
 
 
 
-clients =
+clients=
 await response.json();
 
-if(!Array.isArray(clients)){
-
-throw new Error(
-"Invalid customer data"
-);
-
-}
 
 
-
-const select =
+let select=
 document.getElementById(
 "clientSelect"
 );
 
 
 
-select.innerHTML = `
+select.innerHTML=
 
+`
 <option value="">
 Select Customer
 </option>
-
 `;
 
 
 
 
-clients.forEach(
-function(client,index){
+clients.forEach(function(client,index){
 
 
-
-let option =
-document.createElement(
-"option"
-);
+let option=
+document.createElement("option");
 
 
 
 option.value=index;
 
-
-option.textContent =
+option.textContent=
 client.name;
 
 
 
-select.appendChild(
-option
-);
+select.appendChild(option);
 
 
 
-}
-
-);
+});
 
 
 
@@ -993,7 +837,7 @@ console.log(error);
 
 document.getElementById(
 "message"
-).textContent =
+).innerHTML=
 "Unable to load customers";
 
 
@@ -1008,8 +852,6 @@ document.getElementById(
 
 
 
-
-
 // =====================================================
 // CREATE SKU TABLE
 // =====================================================
@@ -1018,130 +860,119 @@ document.getElementById(
 function createSKUTable(){
 
 
-
-const tbody =
+let tbody=
 document.getElementById(
 "skuTable"
 );
 
 
 
-if(tbody.children.length>0){
-
-return;
-
-}
+tbody.innerHTML="";
 
 
 
+SKUS.forEach(function(sku){
 
 
 
-SKUS.forEach(
-function(sku){
+let row=
+document.createElement("tr");
 
 
 
-let row =
-document.createElement(
-"tr"
-);
+row.innerHTML=`
 
-row.innerHTML = `
-
-<td>
-${sku}
-</td>
+<td>${sku}</td>
 
 
 <td>
+
 <input
-type="number"
 readonly
-id="rate-${sku}"
->
+type="number"
+id="rate-${sku}">
+
 </td>
 
 
 <td>
+
 <input
 type="number"
 min="0"
 id="whole-${sku}"
-placeholder="Whole"
-oninput="calculateSKU('${sku}')"
->
+oninput="calculateSKU('${sku}')">
+
 </td>
 
 
+
 <td>
+
 <input
 type="number"
 min="0"
 id="loose-${sku}"
-placeholder="Loose"
-oninput="calculateSKU('${sku}')"
->
+oninput="calculateSKU('${sku}')">
+
 </td>
 
 
+
 <td>
+
 <input
 readonly
-id="qty-${sku}"
->
+id="qty-${sku}">
+
 </td>
 
 
+
+
 <td>
+
 <input
 readonly
 class="amount"
-id="amount-${sku}"
->
+id="amount-${sku}">
+
 </td>
 
 `;
+
+
+
+tbody.appendChild(row);
+
+
+});
+
+
+
+}
 // =====================================================
 // CUSTOMER SELECT CHANGE
 // =====================================================
 
 
 document
-.getElementById(
-"clientSelect"
-)
+.getElementById("clientSelect")
 .addEventListener(
-
 "change",
-
 function(){
 
 
-
-const index =
-this.value;
-
-
+let index=this.value;
 
 
 
 if(index===""){
 
 
-document.getElementById(
-"clientType"
-).value="";
-
-
-document.getElementById(
-"contact"
-).value="";
-
-
-document.getElementById(
-"address"
-).value="";
+document.getElementById("clientType").value="";
+document.getElementById("contact").value="";
+document.getElementById("address").value="";
 
 
 return;
@@ -1151,38 +982,26 @@ return;
 
 
 
+let client=clients[index];
 
 
-const client =
-clients[index];
 
 
-document.getElementById(
-"clientType"
-).value =
+// CUSTOMER DETAILS
+
+
+document.getElementById("clientType").value=
 client.type || "";
 
 
 
-
-
-document.getElementById(
-"contact"
-).value =
+document.getElementById("contact").value=
 client.contact || "";
 
 
 
-
-
-document.getElementById(
-"address"
-).value =
+document.getElementById("address").value=
 client.address || "";
-
-
-
-
 
 
 
@@ -1192,67 +1011,77 @@ client.address || "";
 // ==============================
 
 
-SKUS.forEach(
-function(sku){
+SKUS.forEach(function(sku){
 
 
 
-const rate =
-client.rates &&
-client.rates[sku]
-?
-client.rates[sku]
-:
-0;
+let rate=0;
 
 
+
+if(client.rates && client.rates[sku]){
+
+
+rate=client.rates[sku];
+
+
+}
 
 
 
 document.getElementById(
 "rate-"+sku
-).value =
-rate;
+).value=rate;
+
+
+
+});
+
+
+
+});
 
 
 
 
 
-}
-
-);
 
 
-
-
-
-}
-
-);
 
 // =====================================================
 // CALCULATE SKU
 // =====================================================
 
+
 function calculateSKU(sku){
 
 
-const whole =
+
+let whole=
+
 Number(
-document.getElementById("whole-"+sku).value
-)||0;
+document.getElementById(
+"whole-"+sku
+).value
+)
+||0;
 
 
-const loose =
+
+let loose=
+
 Number(
-document.getElementById("loose-"+sku).value
-)||0;
+document.getElementById(
+"loose-"+sku
+).value
+)
+||0;
 
 
 
-// Loose conversion from Master_SKU
 
-const loosePerWhole =
+let pack=
+
 Number(
 PACK_SIZE[sku]
 )
@@ -1260,35 +1089,43 @@ PACK_SIZE[sku]
 
 
 
-// Rate per whole
+let rate=
 
-const wholeRate =
 Number(
-document.getElementById("rate-"+sku).value
+document.getElementById(
+"rate-"+sku
+).value
 )
 ||0;
 
 
 
 
-// Total loose quantity
+// Total Quantity in loose units
 
-const qty =
-(whole * loosePerWhole) + loose;
+
+let qty=
+
+(whole * pack) + loose;
 
 
 
 
 // Rate per loose
 
-const looseRate =
-wholeRate / loosePerWhole;
+
+let looseRate=
+
+rate / pack;
+
 
 
 
 // Amount
 
-const amount =
+
+let amount=
+
 qty * looseRate;
 
 
@@ -1296,22 +1133,27 @@ qty * looseRate;
 
 document.getElementById(
 "qty-"+sku
-).value =
+).value=
+
 qty || "";
+
 
 
 
 document.getElementById(
 "amount-"+sku
-).value =
-amount
-?
-amount.toFixed(2)
-:
-"";
+).value=
+
+amount ? amount.toFixed(2) : "";
+
 
 
 }
+
+
+
+
+
 
 
 
@@ -1319,15 +1161,16 @@ amount.toFixed(2)
 // SUBMIT ORDER
 // =====================================================
 
+
 async function submitOrder(){
 
 
 
-const index =
+let index=
+
 document.getElementById(
 "clientSelect"
 ).value;
-
 
 
 
@@ -1348,17 +1191,14 @@ return;
 
 
 
+let client=
 
-const client =
 clients[index];
 
 
 
 
-
-
 let orders={};
-
 
 let hasOrder=false;
 
@@ -1366,63 +1206,25 @@ let hasOrder=false;
 
 
 
-
-
-SKUS.forEach(
-function(sku){
+SKUS.forEach(function(sku){
 
 
 
-const whole =
-document.getElementById(
-"whole-"+sku
-).value || "";
+let qty=
 
-
-
-
-const loose =
-document.getElementById(
-"loose-"+sku
-).value || "";
-
-
-
-
-const qty =
 document.getElementById(
 "qty-"+sku
-).value || "";
-
-
-
-
-const rate =
-document.getElementById(
-"rate-"+sku
-).value || "";
-
-
-
-
-const amount =
-document.getElementById(
-"amount-"+sku
-).value || "";
-
-
-
-
+).value;
 
 
 
 if(qty!==""){
 
+
 hasOrder=true;
 
+
 }
-
-
 
 
 
@@ -1430,29 +1232,46 @@ hasOrder=true;
 orders[sku]={
 
 
-whole:whole,
+whole:
+
+document.getElementById(
+"whole-"+sku
+).value || "",
 
 
-loose:loose,
+
+loose:
+
+document.getElementById(
+"loose-"+sku
+).value || "",
+
 
 
 qty:qty,
 
 
-rate:rate,
+
+rate:
+
+document.getElementById(
+"rate-"+sku
+).value || "",
 
 
-amount:amount
+
+amount:
+
+document.getElementById(
+"amount-"+sku
+).value || ""
 
 
 };
 
 
 
-}
-
-);
-
+});
 
 
 
@@ -1478,10 +1297,7 @@ return;
 
 
 
-
-
-
-const data={
+let data={
 
 
 
@@ -1501,8 +1317,7 @@ address:
 client.address,
 
 
-orders:
-orders
+orders:orders
 
 
 
@@ -1513,16 +1328,16 @@ orders
 
 
 
+let message=
 
-const message =
 document.getElementById(
 "message"
 );
 
 
 
+let button=
 
-const button =
 document.getElementById(
 "submitButton"
 );
@@ -1530,10 +1345,7 @@ document.getElementById(
 
 
 
-
-
-
-message.textContent =
+message.innerHTML=
 "Submitting order...";
 
 
@@ -1546,8 +1358,8 @@ button.disabled=true;
 
 
 
-
 try{
+
 
 
 await fetch(
@@ -1578,9 +1390,7 @@ headers:{
 
 body:
 
-JSON.stringify(
-data
-)
+JSON.stringify(data)
 
 
 
@@ -1593,8 +1403,8 @@ data
 
 
 
+message.innerHTML=
 
-message.textContent =
 "Order submitted successfully";
 
 
@@ -1603,11 +1413,10 @@ message.textContent =
 
 
 
-// CLEAR AFTER SAVE
+// CLEAR FORM
 
 
-SKUS.forEach(
-function(sku){
+SKUS.forEach(function(sku){
 
 
 
@@ -1635,11 +1444,7 @@ document.getElementById(
 
 
 
-}
-
-);
-
-
+});
 
 
 
@@ -1650,15 +1455,20 @@ document.getElementById(
 catch(error){
 
 
+
 console.log(error);
 
 
 
-message.textContent =
+message.innerHTML=
+
 "Order submission failed";
 
 
+
 }
+
+
 
 finally{
 
@@ -1671,14 +1481,3 @@ button.disabled=false;
 
 
 }
-
-
-
-
-
-
-</script>
-
-</body>
-
-</html>
