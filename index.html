@@ -1249,10 +1249,6 @@ return;
 const client =
 clients[index];
 
-console.log("SELECTED CLIENT:", client);
-console.log("SELECTED RG RATE:", client.rates["RG2.20G"]);
-
-
 
 document.getElementById(
 "clientType"
@@ -1339,6 +1335,14 @@ Number(
 document.getElementById("whole-"+sku).value
 )||0;
 
+
+console.log(
+"CALCULATION:",
+sku,
+"RATE:",
+wholeRate
+);
+  
 
 const loose =
 Number(
