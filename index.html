@@ -936,13 +936,6 @@ await fetch(API_URL);
 
 clients =
 await response.json();
-console.log("ALL CLIENTS:", clients);
-
-console.log(
-"FIRST CLIENT RATE:",
-clients[0].rates["RG2.20G"]
-);
-
 
 if(!Array.isArray(clients)){
 
@@ -1256,7 +1249,8 @@ return;
 const client =
 clients[index];
 
-
+console.log("SELECTED CLIENT:", client);
+console.log("SELECTED RG RATE:", client.rates["RG2.20G"]);
 
 
 
