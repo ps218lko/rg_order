@@ -8,7 +8,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>Order Entry</title>
+<title>RG Order Entry</title>
 
 
 <style>
@@ -41,6 +41,32 @@ body {
   box-shadow:
   0 3px 15px
   rgba(0,0,0,0.1);
+
+}
+
+
+.login-container {
+
+  max-width: 400px;
+
+  margin: 60px auto;
+
+  background: white;
+
+  padding: 30px;
+
+  border-radius: 12px;
+
+  box-shadow:
+  0 3px 15px
+  rgba(0,0,0,0.1);
+
+}
+
+
+.login-container h1 {
+
+  text-align: center;
 
 }
 
@@ -173,13 +199,42 @@ button:disabled {
 }
 
 
-#message {
+.logout-button {
+
+  background:
+  #d32f2f;
+
+  margin-bottom: 10px;
+
+}
+
+
+#message,
+#loginMessage {
 
   text-align: center;
 
   margin-top: 20px;
 
   font-weight: bold;
+
+}
+
+
+#orderPage {
+
+  display: none;
+
+}
+
+
+.user-welcome {
+
+  text-align: right;
+
+  color: #555;
+
+  margin-bottom: 10px;
 
 }
 
@@ -209,7 +264,103 @@ button:disabled {
 <body>
 
 
+<!-- ===================================== -->
+<!-- LOGIN PAGE -->
+<!-- ===================================== -->
+
+
+<div
+id="loginPage"
+class="login-container"
+>
+
+
+<h1>
+Login
+</h1>
+
+
+<label>
+Username
+</label>
+
+
+<input
+id="username"
+type="text"
+placeholder="Enter username"
+autocomplete="username"
+>
+
+
+<label>
+Password
+</label>
+
+
+<input
+id="password"
+type="password"
+placeholder="Enter password"
+autocomplete="current-password"
+>
+
+
+<button
+id="loginButton"
+onclick="loginUser()"
+>
+
+Login
+
+</button>
+
+
+<div
+id="loginMessage"
+>
+
+</div>
+
+
+</div>
+
+
+
+<!-- ===================================== -->
+<!-- EXISTING ORDER PAGE -->
+<!-- ===================================== -->
+
+
+<div
+id="orderPage"
+>
+
+
 <div class="container">
+
+
+<div
+class="user-welcome"
+>
+
+Welcome,
+<strong
+id="loggedInName"
+>
+</strong>
+
+</div>
+
+
+<button
+class="logout-button"
+onclick="logoutUser()"
+>
+
+Logout
+
+</button>
 
 
 <h1>
@@ -326,6 +477,10 @@ id="message"
 </div>
 
 
+</div>
+
+
+
 <script>
 
 
@@ -334,7 +489,7 @@ id="message"
 // =====================================
 
 const API_URL =
-"https://script.google.com/macros/s/AKfycbxdsNljthmMpdKQLMbnI8tu4b6afiLziKwvFQ-zfbEg9sH0jXViR1kW-J7k0oJZwd8/exec";
+"https://script.google.com/macros/s/AKfycbzO97H4XjCt2PYV4QSMKpOoAo5EkLbWQ3dIC5oFpo171l-XzsHLT4dLt3JAhyGdkCZR/exec";
 
 
 
@@ -371,6 +526,313 @@ const SKUS = [
 
 
 let clients = [];
+
+let loggedInUser = null;
+
+
+
+// =====================================
+// LOGIN
+// =====================================
+
+async function loginUser() {
+
+
+  const username =
+    document
+      .getElementById(
+        "username"
+      )
+      .value
+      .trim();
+
+
+  const password =
+    document
+      .getElementById(
+        "password"
+      )
+      .value;
+
+
+  const message =
+    document
+      .getElementById(
+        "loginMessage"
+      );
+
+
+  const button =
+    document
+      .getElementById(
+        "loginButton"
+      );
+
+
+  if (
+    username === "" ||
+    password === ""
+  ) {
+
+    message.textContent =
+      "Please enter username and password.";
+
+    return;
+
+  }
+
+
+  message.textContent =
+    "Checking login...";
+
+
+  button.disabled =
+    true;
+
+
+  try {
+
+
+    const response =
+      await fetch(
+
+        API_URL,
+
+        {
+
+          method:
+            "POST",
+
+          mode:
+            "cors",
+
+          headers: {
+
+            "Content-Type":
+              "text/plain;charset=utf-8"
+
+          },
+
+          body:
+
+            JSON.stringify({
+
+              action:
+                "login",
+
+              username:
+                username,
+
+              password:
+                password
+
+            })
+
+        }
+
+      );
+
+
+    const result =
+      await response.json();
+
+
+    if (
+      result.success
+    ) {
+
+
+      loggedInUser = {
+
+        username:
+          result.username,
+
+        name:
+          result.name
+
+      };
+
+
+      sessionStorage.setItem(
+
+        "rgLoggedInUser",
+
+        JSON.stringify(
+          loggedInUser
+        )
+
+      );
+
+
+      document
+        .getElementById(
+          "loggedInName"
+        )
+        .textContent =
+        result.name;
+
+
+      document
+        .getElementById(
+          "loginPage"
+        )
+        .style.display =
+        "none";
+
+
+      document
+        .getElementById(
+          "orderPage"
+        )
+        .style.display =
+        "block";
+
+
+      // Load order form
+
+      createSKUTable();
+
+      loadClients();
+
+
+    } else {
+
+
+      message.textContent =
+        result.message;
+
+
+    }
+
+
+  }
+
+
+  catch(error) {
+
+
+    console.error(
+      error
+    );
+
+
+    message.textContent =
+      "Login failed. Please try again.";
+
+
+  }
+
+
+  finally {
+
+
+    button.disabled =
+      false;
+
+
+  }
+
+}
+
+
+
+// =====================================
+// CHECK EXISTING LOGIN SESSION
+// =====================================
+
+window.addEventListener(
+  "load",
+  function() {
+
+
+    const savedUser =
+      sessionStorage.getItem(
+        "rgLoggedInUser"
+      );
+
+
+    if (
+      savedUser
+    ) {
+
+
+      try {
+
+
+        loggedInUser =
+          JSON.parse(
+            savedUser
+          );
+
+
+        document
+          .getElementById(
+            "loggedInName"
+          )
+          .textContent =
+          loggedInUser.name;
+
+
+        document
+          .getElementById(
+            "loginPage"
+          )
+          .style.display =
+          "none";
+
+
+        document
+          .getElementById(
+            "orderPage"
+          )
+          .style.display =
+          "block";
+
+
+        createSKUTable();
+
+        loadClients();
+
+
+      }
+
+
+      catch(error) {
+
+
+        sessionStorage.removeItem(
+          "rgLoggedInUser"
+        );
+
+
+      }
+
+    }
+
+  }
+);
+
+
+
+// =====================================
+// LOGOUT
+// =====================================
+
+function logoutUser() {
+
+
+  loggedInUser =
+    null;
+
+
+  sessionStorage.removeItem(
+    "rgLoggedInUser"
+  );
+
+
+  location.reload();
+
+}
 
 
 
@@ -416,6 +878,17 @@ async function loadClients() {
       document.getElementById(
         "clientSelect"
       );
+
+
+    // Prevent duplicate entries
+
+    select.innerHTML = `
+
+      <option value="">
+        Select Customer
+      </option>
+
+    `;
 
 
     clients.forEach(
@@ -478,10 +951,21 @@ async function loadClients() {
 function createSKUTable() {
 
 
+  // Prevent duplicate SKU table
+
   const tbody =
     document.getElementById(
       "skuTable"
     );
+
+
+  if (
+    tbody.children.length > 0
+  ) {
+
+    return;
+
+  }
 
 
   SKUS.forEach(
@@ -609,8 +1093,6 @@ document
         clients[index];
 
 
-      // Client type
-
       document
         .getElementById(
           "clientType"
@@ -618,8 +1100,6 @@ document
         .value =
         client.type || "";
 
-
-      // Contact
 
       document
         .getElementById(
@@ -629,8 +1109,6 @@ document
         client.contact || "";
 
 
-      // Address
-
       document
         .getElementById(
           "address"
@@ -638,8 +1116,6 @@ document
         .value =
         client.address || "";
 
-
-      // Load rates
 
       SKUS.forEach(
         sku => {
@@ -710,10 +1186,6 @@ async function submitOrder() {
   let hasOrder =
     false;
 
-
-  // ===================================
-  // COLLECT SKU DATA
-  // ===================================
 
   SKUS.forEach(
     sku => {
@@ -835,10 +1307,6 @@ async function submitOrder() {
   try {
 
 
-    // =================================
-    // SEND TO GOOGLE APPS SCRIPT
-    // =================================
-
     await fetch(
 
       API_URL,
@@ -848,10 +1316,8 @@ async function submitOrder() {
         method:
           "POST",
 
-
         mode:
           "no-cors",
-
 
         headers: {
 
@@ -859,7 +1325,6 @@ async function submitOrder() {
             "text/plain;charset=utf-8"
 
         },
-
 
         body:
           JSON.stringify(data)
@@ -869,16 +1334,9 @@ async function submitOrder() {
     );
 
 
-
-    // =================================
-    // SUCCESS
-    // =================================
-
     message.textContent =
       "Order submitted successfully!";
 
-
-    // Clear quantities
 
     SKUS.forEach(
       sku => {
@@ -925,16 +1383,6 @@ async function submitOrder() {
 
 
 }
-
-
-
-// =====================================
-// START APPLICATION
-// =====================================
-
-createSKUTable();
-
-loadClients();
 
 
 </script>
