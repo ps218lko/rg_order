@@ -264,9 +264,9 @@ button:disabled {
 <body>
 
 
-<!-- ===================================== -->
+<!-- ================================================= -->
 <!-- LOGIN PAGE -->
-<!-- ===================================== -->
+<!-- ================================================= -->
 
 
 <div
@@ -327,9 +327,9 @@ id="loginMessage"
 
 
 
-<!-- ===================================== -->
-<!-- EXISTING ORDER PAGE -->
-<!-- ===================================== -->
+<!-- ================================================= -->
+<!-- ORDER PAGE -->
+<!-- ================================================= -->
 
 
 <div
@@ -373,7 +373,9 @@ Select Customer
 </label>
 
 
-<select id="clientSelect">
+<select
+id="clientSelect"
+>
 
 <option value="">
 Select Customer
@@ -425,7 +427,6 @@ Order Details
 
 <thead>
 
-
 <tr>
 
 <th>
@@ -442,14 +443,12 @@ Order Quantity
 
 </tr>
 
-
 </thead>
 
 
 <tbody
 id="skuTable"
 >
-
 
 </tbody>
 
@@ -484,18 +483,18 @@ id="message"
 <script>
 
 
-// =====================================
-// APPS SCRIPT WEB APP URL
-// =====================================
+// =================================================
+// APPS SCRIPT URL
+// =================================================
 
 const API_URL =
-"https://script.google.com/macros/s/AKfycbzO97H4XjCt2PYV4QSMKpOoAo5EkLbWQ3dIC5oFpo171l-XzsHLT4dLt3JAhyGdkCZR/exec";
+"https://script.google.com/macros/s/AKfycbzEmEYyleZ8QRr7xUiykbhjhplt5UnPpf7lo63qgO0k2wtI1pjxH9f1S3gxzHMJFIhk/exec";
 
 
 
-// =====================================
+// =================================================
 // SKU LIST
-// =====================================
+// =================================================
 
 const SKUS = [
 
@@ -531,11 +530,11 @@ let loggedInUser = null;
 
 
 
-// =====================================
-// LOGIN
-// =====================================
+// =================================================
+// LOGIN USING JSONP
+// =================================================
 
-async function loginUser() {
+function loginUser() {
 
 
   const username =
@@ -552,7 +551,8 @@ async function loginUser() {
       .getElementById(
         "password"
       )
-      .value;
+      .value
+      .trim();
 
 
   const message =
@@ -590,155 +590,189 @@ async function loginUser() {
     true;
 
 
-  try {
+  // Unique callback name
+
+  const callbackName =
+    "loginCallback_" +
+    Date.now();
 
 
-    const response =
-      await fetch(
+  // Create callback
 
-        API_URL,
+  window[callbackName] =
+    function(result) {
 
-        {
 
-          method:
-            "POST",
+      try {
 
-          mode:
-            "cors",
 
-          headers: {
+        if (
+          result.success
+        ) {
 
-            "Content-Type":
-              "text/plain;charset=utf-8"
 
-          },
+          loggedInUser = {
 
-          body:
+            username:
+              result.username,
 
-            JSON.stringify({
+            name:
+              result.name
 
-              action:
-                "login",
+          };
 
-              username:
-                username,
 
-              password:
-                password
+          // Save login session
 
-            })
+          sessionStorage.setItem(
+
+            "rgLoggedInUser",
+
+            JSON.stringify(
+              loggedInUser
+            )
+
+          );
+
+
+          // Show user name
+
+          document
+            .getElementById(
+              "loggedInName"
+            )
+            .textContent =
+            result.name;
+
+
+          // Hide login
+
+          document
+            .getElementById(
+              "loginPage"
+            )
+            .style.display =
+            "none";
+
+
+          // Show order page
+
+          document
+            .getElementById(
+              "orderPage"
+            )
+            .style.display =
+            "block";
+
+
+          // Create table
+
+          createSKUTable();
+
+
+          // Load clients
+
+          loadClients();
+
+
+        } else {
+
+
+          message.textContent =
+            result.message ||
+            "Invalid username or password.";
+
 
         }
 
-      );
+
+      } catch(error) {
 
 
-    const result =
-      await response.json();
+        console.error(
+          error
+        );
 
 
-    if (
-      result.success
-    ) {
+        message.textContent =
+          "Login error.";
+
+      }
 
 
-      loggedInUser = {
-
-        username:
-          result.username,
-
-        name:
-          result.name
-
-      };
+      button.disabled =
+        false;
 
 
-      sessionStorage.setItem(
+      // Remove callback
 
-        "rgLoggedInUser",
+      delete window[callbackName];
 
-        JSON.stringify(
-          loggedInUser
-        )
-
-      );
+    };
 
 
-      document
-        .getElementById(
-          "loggedInName"
-        )
-        .textContent =
-        result.name;
+  // Create script element
 
-
-      document
-        .getElementById(
-          "loginPage"
-        )
-        .style.display =
-        "none";
-
-
-      document
-        .getElementById(
-          "orderPage"
-        )
-        .style.display =
-        "block";
-
-
-      // Load order form
-
-      createSKUTable();
-
-      loadClients();
-
-
-    } else {
-
-
-      message.textContent =
-        result.message;
-
-
-    }
-
-
-  }
-
-
-  catch(error) {
-
-
-    console.error(
-      error
+  const script =
+    document.createElement(
+      "script"
     );
 
 
-    message.textContent =
-      "Login failed. Please try again.";
+  // JSONP URL
+
+  script.src =
+
+    API_URL +
+
+    "?action=login" +
+
+    "&username=" +
+    encodeURIComponent(
+      username
+    ) +
+
+    "&password=" +
+    encodeURIComponent(
+      password
+    ) +
+
+    "&callback=" +
+    callbackName;
 
 
-  }
+  // Error handling
+
+  script.onerror =
+    function() {
 
 
-  finally {
+      message.textContent =
+        "Unable to connect to login server.";
 
 
-    button.disabled =
-      false;
+      button.disabled =
+        false;
 
 
-  }
+      delete window[callbackName];
+
+    };
+
+
+  document
+    .body
+    .appendChild(
+      script
+    );
 
 }
 
 
 
-// =====================================
-// CHECK EXISTING LOGIN SESSION
-// =====================================
+// =================================================
+// CHECK SAVED LOGIN
+// =================================================
 
 window.addEventListener(
   "load",
@@ -791,19 +825,16 @@ window.addEventListener(
 
         createSKUTable();
 
+
         loadClients();
 
 
-      }
-
-
-      catch(error) {
+      } catch(error) {
 
 
         sessionStorage.removeItem(
           "rgLoggedInUser"
         );
-
 
       }
 
@@ -814,9 +845,9 @@ window.addEventListener(
 
 
 
-// =====================================
+// =================================================
 // LOGOUT
-// =====================================
+// =================================================
 
 function logoutUser() {
 
@@ -836,9 +867,9 @@ function logoutUser() {
 
 
 
-// =====================================
+// =================================================
 // LOAD CLIENTS
-// =====================================
+// =================================================
 
 async function loadClients() {
 
@@ -847,10 +878,14 @@ async function loadClients() {
 
 
     const response =
-      await fetch(API_URL);
+      await fetch(
+        API_URL
+      );
 
 
-    if (!response.ok) {
+    if (
+      !response.ok
+    ) {
 
       throw new Error(
         "Failed to load clients"
@@ -864,7 +899,9 @@ async function loadClients() {
 
 
     if (
-      !Array.isArray(clients)
+      !Array.isArray(
+        clients
+      )
     ) {
 
       throw new Error(
@@ -875,12 +912,11 @@ async function loadClients() {
 
 
     const select =
-      document.getElementById(
-        "clientSelect"
-      );
+      document
+        .getElementById(
+          "clientSelect"
+        );
 
-
-    // Prevent duplicate entries
 
     select.innerHTML = `
 
@@ -892,13 +928,17 @@ async function loadClients() {
 
 
     clients.forEach(
-      (client, index) => {
+      function(
+        client,
+        index
+      ) {
 
 
         const option =
-          document.createElement(
-            "option"
-          );
+          document
+            .createElement(
+              "option"
+            );
 
 
         option.value =
@@ -918,10 +958,7 @@ async function loadClients() {
     );
 
 
-  }
-
-
-  catch(error) {
+  } catch(error) {
 
 
     console.error(
@@ -939,25 +976,25 @@ async function loadClients() {
 
   }
 
-
 }
 
 
 
-// =====================================
+// =================================================
 // CREATE SKU TABLE
-// =====================================
+// =================================================
 
 function createSKUTable() {
 
 
-  // Prevent duplicate SKU table
-
   const tbody =
-    document.getElementById(
-      "skuTable"
-    );
+    document
+      .getElementById(
+        "skuTable"
+      );
 
+
+  // Prevent duplicate table
 
   if (
     tbody.children.length > 0
@@ -969,13 +1006,14 @@ function createSKUTable() {
 
 
   SKUS.forEach(
-    sku => {
+    function(sku) {
 
 
       const row =
-        document.createElement(
-          "tr"
-        );
+        document
+          .createElement(
+            "tr"
+          );
 
 
       row.innerHTML = `
@@ -983,7 +1021,6 @@ function createSKUTable() {
         <td>
           ${sku}
         </td>
-
 
         <td>
 
@@ -1002,7 +1039,6 @@ function createSKUTable() {
           >
 
         </td>
-
 
         <td>
 
@@ -1033,14 +1069,13 @@ function createSKUTable() {
     }
   );
 
-
 }
 
 
 
-// =====================================
+// =================================================
 // CLIENT SELECTION
-// =====================================
+// =================================================
 
 document
   .getElementById(
@@ -1066,25 +1101,27 @@ document
           .getElementById(
             "clientType"
           )
-          .value = "";
+          .value =
+          "";
 
 
         document
           .getElementById(
             "contact"
           )
-          .value = "";
+          .value =
+          "";
 
 
         document
           .getElementById(
             "address"
           )
-          .value = "";
+          .value =
+          "";
 
 
         return;
-
 
       }
 
@@ -1092,6 +1129,8 @@ document
       const client =
         clients[index];
 
+
+      // Client type
 
       document
         .getElementById(
@@ -1101,6 +1140,8 @@ document
         client.type || "";
 
 
+      // Contact
+
       document
         .getElementById(
           "contact"
@@ -1108,6 +1149,8 @@ document
         .value =
         client.contact || "";
 
+
+      // Address
 
       document
         .getElementById(
@@ -1117,8 +1160,10 @@ document
         client.address || "";
 
 
+      // Rates
+
       SKUS.forEach(
-        sku => {
+        function(sku) {
 
 
           document
@@ -1145,9 +1190,9 @@ document
 
 
 
-// =====================================
+// =================================================
 // SUBMIT ORDER
-// =====================================
+// =================================================
 
 async function submitOrder() {
 
@@ -1172,7 +1217,6 @@ async function submitOrder() {
 
     return;
 
-
   }
 
 
@@ -1187,8 +1231,10 @@ async function submitOrder() {
     false;
 
 
+  // Collect SKU data
+
   SKUS.forEach(
-    sku => {
+    function(sku) {
 
 
       const quantity =
@@ -1219,21 +1265,17 @@ async function submitOrder() {
 
       orders[sku] = {
 
-
         quantity:
           quantity,
 
-
         rate:
           rate
-
 
       };
 
 
     }
   );
-
 
 
   if (
@@ -1248,9 +1290,7 @@ async function submitOrder() {
 
     return;
 
-
   }
-
 
 
   const data = {
@@ -1275,9 +1315,7 @@ async function submitOrder() {
     orders:
       orders
 
-
   };
-
 
 
   const message =
@@ -1294,7 +1332,6 @@ async function submitOrder() {
       );
 
 
-
   message.textContent =
     "Submitting order...";
 
@@ -1303,9 +1340,12 @@ async function submitOrder() {
     true;
 
 
-
   try {
 
+
+    // Keep no-cors because this
+    // is your existing working
+    // order submission method
 
     await fetch(
 
@@ -1327,7 +1367,9 @@ async function submitOrder() {
         },
 
         body:
-          JSON.stringify(data)
+          JSON.stringify(
+            data
+          )
 
       }
 
@@ -1338,8 +1380,10 @@ async function submitOrder() {
       "Order submitted successfully!";
 
 
+    // Clear quantities
+
     SKUS.forEach(
-      sku => {
+      function(sku) {
 
 
         document
@@ -1354,10 +1398,7 @@ async function submitOrder() {
     );
 
 
-  }
-
-
-  catch(error) {
+  } catch(error) {
 
 
     console.error(
@@ -1369,10 +1410,7 @@ async function submitOrder() {
       "Error submitting order. Please try again.";
 
 
-  }
-
-
-  finally {
+  } finally {
 
 
     button.disabled =
@@ -1381,9 +1419,7 @@ async function submitOrder() {
 
   }
 
-
 }
-
 
 </script>
 
