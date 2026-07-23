@@ -399,7 +399,12 @@ Order Details
 
 </table>
 
+<div style="text-align:right; margin-top:15px; font-size:18px; font-weight:bold;">
 
+Total Amount:
+₹ <span id="totalAmount">0.00</span>
+
+</div>
 
 
 
@@ -981,11 +986,46 @@ qty || "";
 
 document.getElementById("amount-"+sku).value=
 amount ? amount.toFixed(2) : "";
+calculateTotalAmount();
+
+
+}
+function calculateTotalAmount(){
+
+
+let total=0;
+
+
+SKUS.forEach(function(sku){
+
+
+let amount=
+
+Number(
+document.getElementById(
+"amount-"+sku
+).value
+)
+||0;
+
+
+
+total += amount;
+
+
+});
+
+
+
+document.getElementById(
+"totalAmount"
+).innerHTML=
+
+total.toFixed(2);
 
 
 
 }
-
 
 
 
@@ -1105,7 +1145,7 @@ document.getElementById("message").innerHTML=
 
 }
 
-
+document.getElementById("totalAmount").innerHTML="0.00";
 
 
 </script>
