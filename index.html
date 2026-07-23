@@ -10,100 +10,193 @@ content="width=device-width, initial-scale=1.0">
 
 <title>Order Entry</title>
 
+
 <style>
 
 body {
+
   font-family: Arial, sans-serif;
+
   background: #f4f6f8;
+
   margin: 0;
+
   padding: 20px;
+
 }
+
 
 .container {
+
   max-width: 900px;
+
   margin: auto;
+
   background: white;
+
   padding: 25px;
+
   border-radius: 12px;
-  box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+
+  box-shadow:
+  0 3px 15px
+  rgba(0,0,0,0.1);
+
 }
+
 
 h1 {
+
   text-align: center;
+
 }
 
+
 label {
+
   display: block;
+
   font-weight: bold;
+
   margin-top: 15px;
+
 }
+
 
 input,
 select {
+
   width: 100%;
+
   padding: 10px;
+
   margin-top: 5px;
+
   box-sizing: border-box;
-  border: 1px solid #ccc;
+
+  border:
+  1px solid #ccc;
+
   border-radius: 6px;
+
 }
+
 
 input[readonly] {
+
   background: #eee;
+
 }
 
+
 table {
+
   width: 100%;
-  border-collapse: collapse;
+
+  border-collapse:
+  collapse;
+
   margin-top: 25px;
+
 }
+
 
 th,
 td {
-  border: 1px solid #ddd;
+
+  border:
+  1px solid #ddd;
+
   padding: 8px;
+
   text-align: center;
+
 }
+
 
 th {
-  background: #f0f0f0;
+
+  background:
+  #f0f0f0;
+
 }
+
 
 .rate {
-  background: #fff8dc;
+
+  background:
+  #fff8dc;
+
 }
+
 
 button {
+
   width: 100%;
+
   padding: 14px;
+
   margin-top: 25px;
+
   border: none;
+
   border-radius: 6px;
-  background: #1976d2;
+
+  background:
+  #1976d2;
+
   color: white;
+
   font-size: 17px;
+
   cursor: pointer;
+
 }
+
 
 button:hover {
-  background: #125aa0;
+
+  background:
+  #125aa0;
+
 }
 
-#message {
-  text-align: center;
-  margin-top: 20px;
-  font-weight: bold;
+
+button:disabled {
+
+  background:
+  #999;
+
+  cursor:
+  not-allowed;
+
 }
+
+
+#message {
+
+  text-align: center;
+
+  margin-top: 20px;
+
+  font-weight: bold;
+
+}
+
 
 @media(max-width:600px) {
 
   table {
+
     font-size: 13px;
+
   }
 
   th,
   td {
+
     padding: 5px;
+
   }
 
 }
@@ -119,10 +212,15 @@ button:hover {
 <div class="container">
 
 
-<h1>Customer Order Form</h1>
+<h1>
+Customer Order Form
+</h1>
 
 
-<label>Select Customer</label>
+<label>
+Select Customer
+</label>
+
 
 <select id="clientSelect">
 
@@ -133,7 +231,10 @@ Select Customer
 </select>
 
 
-<label>Wholesaler / SemiWholesaler</label>
+<label>
+Wholesaler / SemiWholesaler
+</label>
+
 
 <input
 id="clientType"
@@ -141,7 +242,10 @@ readonly
 >
 
 
-<label>Contact No</label>
+<label>
+Contact No
+</label>
+
 
 <input
 id="contact"
@@ -149,7 +253,10 @@ readonly
 >
 
 
-<label>Address</label>
+<label>
+Address
+</label>
+
 
 <input
 id="address"
@@ -157,34 +264,50 @@ readonly
 >
 
 
-<h2>Order Details</h2>
+<h2>
+Order Details
+</h2>
 
 
 <table>
 
+
 <thead>
+
 
 <tr>
 
-<th>SKU</th>
+<th>
+SKU
+</th>
 
-<th>Rate</th>
+<th>
+Rate
+</th>
 
-<th>Order Quantity</th>
+<th>
+Order Quantity
+</th>
 
 </tr>
+
 
 </thead>
 
 
-<tbody id="skuTable">
+<tbody
+id="skuTable"
+>
+
 
 </tbody>
+
 
 </table>
 
 
 <button
+id="submitButton"
 onclick="submitOrder()"
 >
 
@@ -193,7 +316,11 @@ Submit Order
 </button>
 
 
-<div id="message"></div>
+<div
+id="message"
+>
+
+</div>
 
 
 </div>
@@ -203,11 +330,12 @@ Submit Order
 
 
 // =====================================
-// CHANGE THIS TO YOUR APPS SCRIPT URL
+// APPS SCRIPT WEB APP URL
 // =====================================
 
 const API_URL =
-"https://script.google.com/macros/s/AKfycbzuCHzVVpXDhowI-jvL-2i3UWU7hwzaD6LVCCAQeFy12QASEtODnzz-ULyTFhfqICJn/exec";
+"https://script.google.com/macros/s/AKfycbw-W1FdGaiS7ImtmUkq_F6z3md0vF0VBEOz1E25yYWAz7wdIF_D6AIzku-ZFGBjsdld/exec";
+
 
 
 // =====================================
@@ -217,21 +345,33 @@ const API_URL =
 const SKUS = [
 
 "RG2.20G",
+
 "RG4.0G",
+
 "RG17.0G",
+
 "RG100.0G",
+
 "RGS2.20G",
+
 "RGM1.50G",
+
 "TZ0.25G",
+
 "TZ0.45G",
+
 "TZ4.25G",
+
 "TZ10.0G",
+
 "TZ50.0G"
 
 ];
 
 
+
 let clients = [];
+
 
 
 // =====================================
@@ -240,13 +380,36 @@ let clients = [];
 
 async function loadClients() {
 
+
   try {
+
 
     const response =
       await fetch(API_URL);
 
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Failed to load clients"
+      );
+
+    }
+
+
     clients =
       await response.json();
+
+
+    if (
+      !Array.isArray(clients)
+    ) {
+
+      throw new Error(
+        "Invalid client data"
+      );
+
+    }
 
 
     const select =
@@ -258,36 +421,54 @@ async function loadClients() {
     clients.forEach(
       (client, index) => {
 
+
         const option =
           document.createElement(
             "option"
           );
 
-        option.value = index;
+
+        option.value =
+          index;
+
 
         option.textContent =
           client.name;
+
 
         select.appendChild(
           option
         );
 
+
       }
     );
 
 
-  } catch(error) {
+  }
 
-    console.error(error);
 
-    document.getElementById(
-      "message"
-    ).textContent =
+  catch(error) {
+
+
+    console.error(
+      error
+    );
+
+
+    document
+      .getElementById(
+        "message"
+      )
+      .textContent =
       "Unable to load clients.";
+
 
   }
 
+
 }
+
 
 
 // =====================================
@@ -295,6 +476,7 @@ async function loadClients() {
 // =====================================
 
 function createSKUTable() {
+
 
   const tbody =
     document.getElementById(
@@ -304,6 +486,7 @@ function createSKUTable() {
 
   SKUS.forEach(
     sku => {
+
 
       const row =
         document.createElement(
@@ -317,6 +500,7 @@ function createSKUTable() {
           ${sku}
         </td>
 
+
         <td>
 
           <input
@@ -329,9 +513,12 @@ function createSKUTable() {
 
             placeholder="Rate"
 
+            step="0.01"
+
           >
 
         </td>
+
 
         <td>
 
@@ -345,6 +532,8 @@ function createSKUTable() {
 
             placeholder="Qty"
 
+            step="1"
+
           >
 
         </td>
@@ -352,16 +541,21 @@ function createSKUTable() {
       `;
 
 
-      tbody.appendChild(row);
+      tbody.appendChild(
+        row
+      );
+
 
     }
   );
 
+
 }
 
 
+
 // =====================================
-// CLIENT SELECTED
+// CLIENT SELECTION
 // =====================================
 
 document
@@ -369,7 +563,9 @@ document
     "clientSelect"
   )
   .addEventListener(
+
     "change",
+
     function() {
 
 
@@ -377,9 +573,34 @@ document
         this.value;
 
 
-      if(index === "") {
+      if (
+        index === ""
+      ) {
+
+
+        document
+          .getElementById(
+            "clientType"
+          )
+          .value = "";
+
+
+        document
+          .getElementById(
+            "contact"
+          )
+          .value = "";
+
+
+        document
+          .getElementById(
+            "address"
+          )
+          .value = "";
+
 
         return;
+
 
       }
 
@@ -387,6 +608,8 @@ document
       const client =
         clients[index];
 
+
+      // Client type
 
       document
         .getElementById(
@@ -396,6 +619,8 @@ document
         client.type || "";
 
 
+      // Contact
+
       document
         .getElementById(
           "contact"
@@ -403,6 +628,8 @@ document
         .value =
         client.contact || "";
 
+
+      // Address
 
       document
         .getElementById(
@@ -417,18 +644,29 @@ document
       SKUS.forEach(
         sku => {
 
+
           document
             .getElementById(
               "rate-" + sku
             )
             .value =
-            client.rates[sku] || "";
+
+            client.rates &&
+            client.rates[sku] !== undefined
+
+              ? client.rates[sku]
+
+              : "";
+
 
         }
       );
 
+
     }
+
   );
+
 
 
 // =====================================
@@ -446,13 +684,18 @@ async function submitOrder() {
       .value;
 
 
-  if(index === "") {
+  if (
+    index === ""
+  ) {
+
 
     alert(
       "Please select a customer."
     );
 
+
     return;
+
 
   }
 
@@ -464,8 +707,17 @@ async function submitOrder() {
   const orders = {};
 
 
+  let hasOrder =
+    false;
+
+
+  // ===================================
+  // COLLECT SKU DATA
+  // ===================================
+
   SKUS.forEach(
     sku => {
+
 
       const quantity =
         document
@@ -483,50 +735,109 @@ async function submitOrder() {
           .value;
 
 
+      if (
+        quantity !== ""
+      ) {
+
+        hasOrder =
+          true;
+
+      }
+
+
       orders[sku] = {
+
 
         quantity:
           quantity,
 
+
         rate:
           rate
 
+
       };
+
 
     }
   );
 
 
+
+  if (
+    !hasOrder
+  ) {
+
+
+    alert(
+      "Please enter quantity for at least one SKU."
+    );
+
+
+    return;
+
+
+  }
+
+
+
   const data = {
+
 
     name:
       client.name,
 
+
     type:
       client.type,
+
 
     contact:
       client.contact,
 
+
     address:
       client.address,
+
 
     orders:
       orders
 
+
   };
 
 
-  document
-    .getElementById(
-      "message"
-    )
-    .textContent =
+
+  const message =
+    document
+      .getElementById(
+        "message"
+      );
+
+
+  const button =
+    document
+      .getElementById(
+        "submitButton"
+      );
+
+
+
+  message.textContent =
     "Submitting order...";
+
+
+  button.disabled =
+    true;
+
 
 
   try {
 
+
+    // =================================
+    // SEND TO GOOGLE APPS SCRIPT
+    // =================================
 
     await fetch(
 
@@ -537,8 +848,18 @@ async function submitOrder() {
         method:
           "POST",
 
+
         mode:
           "no-cors",
+
+
+        headers: {
+
+          "Content-Type":
+            "text/plain;charset=utf-8"
+
+        },
+
 
         body:
           JSON.stringify(data)
@@ -548,11 +869,12 @@ async function submitOrder() {
     );
 
 
-    document
-      .getElementById(
-        "message"
-      )
-      .textContent =
+
+    // =================================
+    // SUCCESS
+    // =================================
+
+    message.textContent =
       "Order submitted successfully!";
 
 
@@ -561,36 +883,53 @@ async function submitOrder() {
     SKUS.forEach(
       sku => {
 
+
         document
           .getElementById(
             "qty-" + sku
           )
-          .value = "";
+          .value =
+          "";
+
 
       }
     );
 
 
-  } catch(error) {
+  }
 
 
-    console.error(error);
+  catch(error) {
 
 
-    document
-      .getElementById(
-        "message"
-      )
-      .textContent =
-      "Error submitting order.";
+    console.error(
+      error
+    );
+
+
+    message.textContent =
+      "Error submitting order. Please try again.";
+
 
   }
+
+
+  finally {
+
+
+    button.disabled =
+      false;
+
+
+  }
+
 
 }
 
 
+
 // =====================================
-// START
+// START APPLICATION
 // =====================================
 
 createSKUTable();
