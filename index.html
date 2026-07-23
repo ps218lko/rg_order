@@ -87,6 +87,7 @@ margin-top:25px;
 }
 
 
+
 th,
 td{
 
@@ -210,7 +211,6 @@ padding:5px;
 <body>
 
 
-
 <!-- ========================= -->
 <!-- LOGIN PAGE -->
 <!-- ========================= -->
@@ -222,7 +222,6 @@ padding:5px;
 <h1>
 Login
 </h1>
-
 
 
 <label>
@@ -301,9 +300,11 @@ Logout
 
 
 
+
 <h1>
 Customer Order Form
 </h1>
+
 
 
 
@@ -312,12 +313,13 @@ Select Customer
 </label>
 
 
-
 <select id="clientSelect">
+
 
 <option value="">
 Select Customer
 </option>
+
 
 </select>
 
@@ -395,7 +397,6 @@ Order Details
 </tbody>
 
 
-
 </table>
 
 
@@ -409,7 +410,6 @@ onclick="submitOrder()">
 Submit Order
 
 </button>
-
 
 
 
@@ -427,14 +427,11 @@ Submit Order
 
 
 // =====================================================
-// APPS SCRIPT URL
+// API URL
 // =====================================================
-
 
 const API_URL =
 "https://script.google.com/macros/s/AKfycbycaik6xQycLiRYZLe5-KeJqzguETBXDs4QHEZ-VvdEC3R6VS3WayqtqKcsX3EuyCXY/exec";
-
-
 
 
 
@@ -442,9 +439,7 @@ const API_URL =
 // SKU LIST
 // =====================================================
 
-
 const SKUS=[
-
 
 "RG2.20G",
 "RG4.0G",
@@ -467,17 +462,12 @@ const SKUS=[
 
 
 
-
-
-
 // =====================================================
 // PACK SIZE
-// CHANGE AS PER YOUR PACKING
+// CHANGE AS REQUIRED
 // =====================================================
 
-
-let PACK_SIZE={
-
+const PACK_SIZE={
 
 "RG2.20G":20,
 "RG4.0G":20,
@@ -496,9 +486,7 @@ let PACK_SIZE={
 "KH5.75G":20,
 "KH30.0G":20
 
-
 };
-
 
 
 
@@ -511,52 +499,35 @@ let loggedInUser=null;
 
 
 // =====================================================
-// LOGIN USER
+// LOGIN
 // =====================================================
 
 
 function loginUser(){
 
 
-const username=
-document.getElementById("username")
-.value.trim();
+let username=
+document.getElementById("username").value.trim();
 
 
-const password=
-document.getElementById("password")
-.value.trim();
-
-
-const message=
-document.getElementById("loginMessage");
+let password=
+document.getElementById("password").value.trim();
 
 
 
 if(username==="" || password===""){
 
-
-message.innerHTML=
-"Please enter username and password";
-
+document.getElementById("loginMessage").innerHTML=
+"Enter username and password";
 
 return;
-
 
 }
 
 
 
-
-message.innerHTML=
-"Checking login...";
-
-
-
-const callbackName=
+let callbackName=
 "loginCallback_"+Date.now();
-
-
 
 
 
@@ -565,7 +536,6 @@ window[callbackName]=function(result){
 
 
 if(result.success){
-
 
 
 loggedInUser={
@@ -577,38 +547,22 @@ name:result.name
 };
 
 
-
-
 sessionStorage.setItem(
-
 "rgLoggedInUser",
-
 JSON.stringify(loggedInUser)
-
 );
 
 
 
-
-
-document.getElementById(
-"loggedInName"
-).innerHTML=
+document.getElementById("loggedInName").innerHTML=
 result.name;
 
 
 
-
-document.getElementById(
-"loginPage"
-).style.display="none";
+document.getElementById("loginPage").style.display="none";
 
 
-
-document.getElementById(
-"orderPage"
-).style.display="block";
-
+document.getElementById("orderPage").style.display="block";
 
 
 
@@ -623,8 +577,8 @@ loadClients();
 else{
 
 
-message.innerHTML=
-result.message || "Invalid Login";
+document.getElementById("loginMessage").innerHTML=
+"Invalid Login";
 
 
 }
@@ -640,30 +594,20 @@ delete window[callbackName];
 
 
 
-
 let script=document.createElement("script");
-
 
 
 script.src=
 
 API_URL+
-
 "?action=login"+
-
-"&username="+
-encodeURIComponent(username)+
-
-"&password="+
-encodeURIComponent(password)+
-
-"&callback="+
-callbackName;
+"&username="+encodeURIComponent(username)+
+"&password="+encodeURIComponent(password)+
+"&callback="+callbackName;
 
 
 
 document.body.appendChild(script);
-
 
 
 }
@@ -673,25 +617,19 @@ document.body.appendChild(script);
 
 
 
-
 // =====================================================
-// CHECK SAVED LOGIN
+// AUTO LOGIN
 // =====================================================
 
 
 window.onload=function(){
 
 
-
 let saved=
-sessionStorage.getItem(
-"rgLoggedInUser"
-);
-
+sessionStorage.getItem("rgLoggedInUser");
 
 
 if(saved){
-
 
 
 loggedInUser=
@@ -699,22 +637,15 @@ JSON.parse(saved);
 
 
 
-document.getElementById(
-"loggedInName"
-).innerHTML=
+document.getElementById("loggedInName").innerHTML=
 loggedInUser.name;
 
 
 
-document.getElementById(
-"loginPage"
-).style.display="none";
+document.getElementById("loginPage").style.display="none";
 
 
-
-document.getElementById(
-"orderPage"
-).style.display="block";
+document.getElementById("orderPage").style.display="block";
 
 
 
@@ -735,7 +666,6 @@ loadClients();
 
 
 
-
 // =====================================================
 // LOGOUT
 // =====================================================
@@ -744,15 +674,12 @@ loadClients();
 function logoutUser(){
 
 
-
 sessionStorage.removeItem(
 "rgLoggedInUser"
 );
 
 
-
 location.reload();
-
 
 
 }
@@ -762,21 +689,18 @@ location.reload();
 
 
 
-
 // =====================================================
-// LOAD CUSTOMERS
+// LOAD CLIENTS
 // =====================================================
 
 
 async function loadClients(){
 
 
-
 try{
 
 
-
-const response=
+let response=
 await fetch(API_URL);
 
 
@@ -786,35 +710,18 @@ await response.json();
 
 
 
-if(!Array.isArray(clients)){
-
-
-throw new Error(
-"Invalid customer data"
-);
-
-
-}
+let select=
+document.getElementById("clientSelect");
 
 
 
+select.innerHTML=
 
-const select=
-document.getElementById(
-"clientSelect"
-);
-
-
-
-
-select.innerHTML=`
-
+`
 <option value="">
 Select Customer
 </option>
-
 `;
-
 
 
 
@@ -826,13 +733,11 @@ let option=
 document.createElement("option");
 
 
-
 option.value=index;
 
 
 option.textContent=
 client.name;
-
 
 
 select.appendChild(option);
@@ -843,20 +748,15 @@ select.appendChild(option);
 
 
 
-
-
 }
-
-catch(error){
-
-
-console.log(error);
+catch(e){
 
 
-document.getElementById(
-"message"
-).innerHTML=
-"Unable to load customers";
+console.log(e);
+
+
+document.getElementById("message").innerHTML=
+"Customer loading failed";
 
 
 }
@@ -864,8 +764,6 @@ document.getElementById(
 
 
 }
-
-
 
 
 
@@ -880,17 +778,11 @@ document.getElementById(
 function createSKUTable(){
 
 
-
-const tbody=
-document.getElementById(
-"skuTable"
-);
-
+let tbody=
+document.getElementById("skuTable");
 
 
 tbody.innerHTML="";
-
-
 
 
 
@@ -903,72 +795,56 @@ document.createElement("tr");
 
 
 
-
 row.innerHTML=`
 
 <td>${sku}</td>
 
 
 <td>
-
 <input
-type="number"
 readonly
+type="number"
 id="rate-${sku}">
-
 </td>
 
 
-
 <td>
-
 <input
 type="number"
 min="0"
 id="whole-${sku}"
 oninput="calculateSKU('${sku}')">
-
 </td>
 
 
 
-
 <td>
-
 <input
 type="number"
 min="0"
 id="loose-${sku}"
 oninput="calculateSKU('${sku}')">
-
 </td>
 
 
 
-
 <td>
-
 <input
 readonly
 id="qty-${sku}">
-
 </td>
 
 
 
-
 <td>
-
 <input
 readonly
 class="amount"
 id="amount-${sku}">
-
 </td>
 
 
 `;
-
 
 
 
@@ -981,10 +857,15 @@ tbody.appendChild(row);
 
 
 }
-    
+
+
+
+
+
+
 
 // =====================================================
-// CUSTOMER SELECT CHANGE
+// CUSTOMER CHANGE
 // =====================================================
 
 
@@ -996,34 +877,22 @@ function(){
 
 
 
-const index=this.value;
+let index=this.value;
 
 
 
-if(index===""){
-
-
-document.getElementById("clientType").value="";
-document.getElementById("contact").value="";
-document.getElementById("address").value="";
-
-
-return;
-
-
-}
+if(index==="") return;
 
 
 
-
-
-const client=clients[index];
-
-
+let client=
+clients[index];
 
 
 
-// CUSTOMER DETAILS
+console.log("SELECTED CLIENT:",client);
+
+
 
 
 document.getElementById("clientType").value=
@@ -1043,34 +912,14 @@ client.address || "";
 
 
 
-
-// =====================================================
-// LOAD CUSTOMER WISE RATE
-// =====================================================
-
-
 SKUS.forEach(function(sku){
-
-
-
-let rate="";
-
-
-
-if(client.rates && client.rates[sku] !== undefined){
-
-
-rate=client.rates[sku];
-
-
-}
-
-
 
 
 document.getElementById(
 "rate-"+sku
-).value=rate;
+).value=
+
+Number(client.rates[sku]) || 0;
 
 
 
@@ -1079,7 +928,6 @@ document.getElementById(
 
 
 });
-
 
 
 
@@ -1088,7 +936,7 @@ document.getElementById(
 
 
 // =====================================================
-// CALCULATE SKU
+// CALCULATE
 // =====================================================
 
 
@@ -1096,114 +944,47 @@ function calculateSKU(sku){
 
 
 
-const whole=
-
-Number(
-document.getElementById(
-"whole-"+sku
-).value
-)
-||0;
+let whole=
+Number(document.getElementById("whole-"+sku).value)||0;
 
 
 
-
-const loose=
-
-Number(
-document.getElementById(
-"loose-"+sku
-).value
-)
-||0;
+let loose=
+Number(document.getElementById("loose-"+sku).value)||0;
 
 
 
-
-
-const pack=
-
-Number(
-PACK_SIZE[sku]
-)
-||1;
+let pack=
+PACK_SIZE[sku] || 1;
 
 
 
-
-
-const rate=
-
-Number(
-document.getElementById(
-"rate-"+sku
-).value
-)
-||0;
+let rate=
+Number(document.getElementById("rate-"+sku).value)||0;
 
 
 
+let qty=
+(whole*pack)+loose;
 
 
 
-// TOTAL LOOSE QUANTITY
-
-
-const qty=
-
-(whole * pack) + loose;
+let amount=
+(qty*rate)/pack;
 
 
 
-
-
-// RATE PER LOOSE
-
-
-const looseRate=
-
-rate / pack;
-
-
-
-
-
-// AMOUNT
-
-
-const amount=
-
-qty * looseRate;
-
-
-
-
-
-
-document.getElementById(
-"qty-"+sku
-).value=
-
+document.getElementById("qty-"+sku).value=
 qty || "";
 
 
 
-
-
-document.getElementById(
-"amount-"+sku
-).value=
-
+document.getElementById("amount-"+sku).value=
 amount ? amount.toFixed(2) : "";
 
 
 
-
 }
-
-
-
-
 
 
 
@@ -1217,74 +998,30 @@ amount ? amount.toFixed(2) : "";
 async function submitOrder(){
 
 
-
-const index=
-
-document.getElementById(
-"clientSelect"
-).value;
-
+let index=
+document.getElementById("clientSelect").value;
 
 
 
 if(index===""){
 
-
-alert(
-"Please select customer"
-);
-
+alert("Select Customer");
 
 return;
-
 
 }
 
 
 
-
-
-
-const client=
+let client=
 clients[index];
-
-
 
 
 
 let orders={};
 
-let hasOrder=false;
-
-
-
-
-
 
 SKUS.forEach(function(sku){
-
-
-
-const qty=
-
-document.getElementById(
-"qty-"+sku
-).value;
-
-
-
-
-
-if(qty!==""){
-
-
-hasOrder=true;
-
-
-}
-
-
-
 
 
 
@@ -1292,48 +1029,26 @@ orders[sku]={
 
 
 whole:
-
-document.getElementById(
-"whole-"+sku
-).value || "",
-
-
+document.getElementById("whole-"+sku).value,
 
 
 loose:
-
-document.getElementById(
-"loose-"+sku
-).value || "",
+document.getElementById("loose-"+sku).value,
 
 
-
-
-qty:qty,
-
-
+qty:
+document.getElementById("qty-"+sku).value,
 
 
 rate:
-
-document.getElementById(
-"rate-"+sku
-).value || "",
-
-
+document.getElementById("rate-"+sku).value,
 
 
 amount:
-
-document.getElementById(
-"amount-"+sku
-).value || ""
-
+document.getElementById("amount-"+sku).value
 
 
 };
-
-
 
 
 });
@@ -1341,129 +1056,42 @@ document.getElementById(
 
 
 
+let data={
 
 
+name:client.name,
 
-if(!hasOrder){
+type:client.type,
 
+contact:client.contact,
 
-alert(
-"Enter quantity for at least one SKU"
-);
-
-
-return;
-
-
-}
-
-
-
-
-
-
-const data={
-
-
-
-name:
-client.name,
-
-
-
-type:
-client.type,
-
-
-
-contact:
-client.contact,
-
-
-
-address:
-client.address,
-
-
+address:client.address,
 
 orders:orders
 
 
-
 };
 
 
 
 
-
-
-
-const message=
-
-document.getElementById(
-"message"
-);
-
-
-
-
-const button=
-
-document.getElementById(
-"submitButton"
-);
-
-
-
-
-
-message.innerHTML=
-"Submitting order...";
-
-
-
-button.disabled=true;
-
-
-
-
-
-
-
-try{
-
-
-
 await fetch(
-
 API_URL,
-
 {
 
 method:"POST",
 
-
 mode:"no-cors",
-
-
 
 headers:{
 
-
 "Content-Type":
-
 "text/plain;charset=utf-8"
-
 
 },
 
-
-
 body:
-
 JSON.stringify(data)
-
-
 
 }
 
@@ -1471,86 +1099,11 @@ JSON.stringify(data)
 
 
 
-
-
-
-
-message.innerHTML=
+document.getElementById("message").innerHTML=
 "Order submitted successfully";
 
 
-
-
-
-
-
-// CLEAR AFTER SUBMIT
-
-
-SKUS.forEach(function(sku){
-
-
-
-document.getElementById(
-"whole-"+sku
-).value="";
-
-
-
-document.getElementById(
-"loose-"+sku
-).value="";
-
-
-
-document.getElementById(
-"qty-"+sku
-).value="";
-
-
-
-document.getElementById(
-"amount-"+sku
-).value="";
-
-
-
-});
-
-
-
-
-
-
 }
-
-catch(error){
-
-
-
-console.log(error);
-
-
-
-message.innerHTML=
-"Order submission failed";
-
-
-
-}
-
-finally{
-
-
-button.disabled=false;
-
-
-}
-
-
-
-}
-
 
 
 
