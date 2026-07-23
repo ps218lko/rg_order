@@ -1358,60 +1358,59 @@ rate;
 function calculateSKU(sku){
 
 
-
 const whole =
 Number(
-document.getElementById(
-"whole-"+sku
-).value
-) || 0;
-
+document.getElementById("whole-"+sku).value
+)||0;
 
 
 const loose =
 Number(
-document.getElementById(
-"loose-"+sku
-).value
-) || 0;
+document.getElementById("loose-"+sku).value
+)||0;
 
 
 
+// Loose conversion from Master_SKU
 
-const rate =
+const loosePerWhole =
 Number(
-document.getElementById(
-"rate-"+sku
-).value
-) || 0;
-
-
-
-
-
-
-const qty =
-
-(
-whole *
 PACK_SIZE[sku]
 )
-
-+
-
-loose;
+||1;
 
 
 
+// Rate per whole
+
+const wholeRate =
+Number(
+document.getElementById("rate-"+sku).value
+)
+||0;
 
 
+
+
+// Total loose quantity
+
+const qty =
+(whole * loosePerWhole) + loose;
+
+
+
+
+// Rate per loose
+
+const looseRate =
+wholeRate / loosePerWhole;
+
+
+
+// Amount
 
 const amount =
-
-qty *
-rate;
-
-
+qty * looseRate;
 
 
 
@@ -1423,11 +1422,9 @@ qty || "";
 
 
 
-
 document.getElementById(
 "amount-"+sku
 ).value =
-
 amount
 ?
 amount.toFixed(2)
@@ -1435,14 +1432,7 @@ amount.toFixed(2)
 "";
 
 
-
 }
-
-
-
-
-
-
 
 
 
