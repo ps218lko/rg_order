@@ -433,26 +433,12 @@ Order Details
 
 <tr>
 
-<th>
-SKU
-</th>
-
-<th>
-Whole
-</th>
-
-<th>
-Loose
-</th>
-
-<th>
-Qty
-</th>
-
-<th>
-Amount
-</th>
-
+<th>SKU</th>
+<th>Rate</th>
+<th>Whole</th>
+<th>Loose</th>
+<th>Qty</th>
+<th>Amount</th>
 
 </tr>
 
@@ -1146,7 +1132,9 @@ id="qty-${sku}"
 
 <input
 
-type="hidden"
+type="number"
+
+readonly
 
 id="rate-${sku}"
 
