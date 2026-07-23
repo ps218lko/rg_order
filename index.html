@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Order Entry</title>
+
+<style>
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+input[readonly] {
+  background: #eee;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 25px;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+th {
+  background: #f0f0f0;
+}
+
+.rate {
+  background: #fff8dc;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 25px;
+  border: none;
+  border-radius: 6px;
+  background: #1976d2;
+  color: white;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #125aa0;
+}
+
+#message {
+  text-align: center;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+@media(max-width:600px) {
+
+  table {
+    font-size: 13px;
+  }
+
+  th,
+  td {
+    padding: 5px;
+  }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>Customer Order Form</h1>
+
+
+<label>Select Customer</label>
+
+<select id="clientSelect">
+
+<option value="">
+Select Customer
+</option>
+
+</select>
+
+
+<label>Wholesaler / SemiWholesaler</label>
+
+<input
+id="clientType"
+readonly
+>
+
+
+<label>Contact No</label>
+
+<input
+id="contact"
+readonly
+>
+
+
+<label>Address</label>
+
+<input
+id="address"
+readonly
+>
+
+
+<h2>Order Details</h2>
+
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>SKU</th>
+
+<th>Rate</th>
+
+<th>Order Quantity</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="skuTable">
+
+</tbody>
+
+</table>
+
+
+<button
+onclick="submitOrder()"
+>
+
+Submit Order
+
+</button>
+
+
+<div id="message"></div>
+
+
+</div>
+
+
+<script>
+
+
+// =====================================
+// CHANGE THIS TO YOUR APPS SCRIPT URL
+// =====================================
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbyucXcofGEK6PhUqsltTK5VVnhSjKVU4kX6gniJb0m-SDIL5WT8JFxfVVF3ci-UDuMo/exec";
+
+
+// =====================================
+// SKU LIST
+// =====================================
+
+const SKUS = [
+
+"RG2.20G",
+"RG4.0G",
+"RG17.0G",
+"RG100.0G",
+"RGS2.20G",
+"RGM1.50G",
+"TZ0.25G",
+"TZ0.45G",
+"TZ4.25G",
+"TZ10.0G",
+"TZ50.0G"
+
+];
+
+
+let clients = [];
+
+
+// =====================================
+// LOAD CLIENTS
+// =====================================
+
+async function loadClients() {
+
+  try {
+
+    const response =
+      await fetch(API_URL);
+
+    clients =
+      await response.json();
+
+
+    const select =
+      document.getElementById(
+        "clientSelect"
+      );
+
+
+    clients.forEach(
+      (client, index) => {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value = index;
+
+        option.textContent =
+          client.name;
+
+        select.appendChild(
+          option
+        );
+
+      }
+    );
+
+
+  } catch(error) {
+
+    console.error(error);
+
+    document.getElementById(
+      "message"
+    ).textContent =
+      "Unable to load clients.";
+
+  }
+
+}
+
+
+// =====================================
+// CREATE SKU TABLE
+// =====================================
+
+function createSKUTable() {
+
+  const tbody =
+    document.getElementById(
+      "skuTable"
+    );
+
+
+  SKUS.forEach(
+    sku => {
+
+      const row =
+        document.createElement(
+          "tr"
+        );
+
+
+      row.innerHTML = `
+
+        <td>
+          ${sku}
+        </td>
+
+        <td>
+
+          <input
+
+            type="number"
+
+            class="rate"
+
+            id="rate-${sku}"
+
+            placeholder="Rate"
+
+          >
+
+        </td>
+
+        <td>
+
+          <input
+
+            type="number"
+
+            min="0"
+
+            id="qty-${sku}"
+
+            placeholder="Qty"
+
+          >
+
+        </td>
+
+      `;
+
+
+      tbody.appendChild(row);
+
+    }
+  );
+
+}
+
+
+// =====================================
+// CLIENT SELECTED
+// =====================================
+
+document
+  .getElementById(
+    "clientSelect"
+  )
+  .addEventListener(
+    "change",
+    function() {
+
+
+      const index =
+        this.value;
+
+
+      if(index === "") {
+
+        return;
+
+      }
+
+
+      const client =
+        clients[index];
+
+
+      document
+        .getElementById(
+          "clientType"
+        )
+        .value =
+        client.type || "";
+
+
+      document
+        .getElementById(
+          "contact"
+        )
+        .value =
+        client.contact || "";
+
+
+      document
+        .getElementById(
+          "address"
+        )
+        .value =
+        client.address || "";
+
+
+      // Load rates
+
+      SKUS.forEach(
+        sku => {
+
+          document
+            .getElementById(
+              "rate-" + sku
+            )
+            .value =
+            client.rates[sku] || "";
+
+        }
+      );
+
+    }
+  );
+
+
+// =====================================
+// SUBMIT ORDER
+// =====================================
+
+async function submitOrder() {
+
+
+  const index =
+    document
+      .getElementById(
+        "clientSelect"
+      )
+      .value;
+
+
+  if(index === "") {
+
+    alert(
+      "Please select a customer."
+    );
+
+    return;
+
+  }
+
+
+  const client =
+    clients[index];
+
+
+  const orders = {};
+
+
+  SKUS.forEach(
+    sku => {
+
+      const quantity =
+        document
+          .getElementById(
+            "qty-" + sku
+          )
+          .value;
+
+
+      const rate =
+        document
+          .getElementById(
+            "rate-" + sku
+          )
+          .value;
+
+
+      orders[sku] = {
+
+        quantity:
+          quantity,
+
+        rate:
+          rate
+
+      };
+
+    }
+  );
+
+
+  const data = {
+
+    name:
+      client.name,
+
+    type:
+      client.type,
+
+    contact:
+      client.contact,
+
+    address:
+      client.address,
+
+    orders:
+      orders
+
+  };
+
+
+  document
+    .getElementById(
+      "message"
+    )
+    .textContent =
+    "Submitting order...";
+
+
+  try {
+
+
+    await fetch(
+
+      API_URL,
+
+      {
+
+        method:
+          "POST",
+
+        mode:
+          "no-cors",
+
+        body:
+          JSON.stringify(data)
+
+      }
+
+    );
+
+
+    document
+      .getElementById(
+        "message"
+      )
+      .textContent =
+      "Order submitted successfully!";
+
+
+    // Clear quantities
+
+    SKUS.forEach(
+      sku => {
+
+        document
+          .getElementById(
+            "qty-" + sku
+          )
+          .value = "";
+
+      }
+    );
+
+
+  } catch(error) {
+
+
+    console.error(error);
+
+
+    document
+      .getElementById(
+        "message"
+      )
+      .textContent =
+      "Error submitting order.";
+
+  }
+
+}
+
+
+// =====================================
+// START
+// =====================================
+
+createSKUTable();
+
+loadClients();
+
+
+</script>
+
+
+</body>
+
+</html>
