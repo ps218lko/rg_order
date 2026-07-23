@@ -856,98 +856,263 @@ document.getElementById(
 // CREATE SKU TABLE
 // =====================================================
 
-
+// CREATE TABLE
 function createSKUTable(){
 
+    const tbody=document.getElementById("skuTable");
 
-let tbody=
+    tbody.innerHTML="";
+
+    SKUS.forEach(function(sku){
+
+        let row=document.createElement("tr");
+
+        row.innerHTML=`
+
+        <td>${sku}</td>
+
+        <td>
+        <input readonly id="rate-${sku}">
+        </td>
+
+        <td>
+        <input type="number"
+        id="whole-${sku}"
+        oninput="calculateSKU('${sku}')">
+        </td>
+
+
+        <td>
+        <input type="number"
+        id="loose-${sku}"
+        oninput="calculateSKU('${sku}')">
+        </td>
+
+
+        <td>
+        <input readonly id="qty-${sku}">
+        </td>
+
+
+        <td>
+        <input readonly id="amount-${sku}">
+        </td>
+
+        `;
+
+
+        tbody.appendChild(row);
+
+
+    });   // <---- CLOSE FOREACH
+
+
+}       // <---- CLOSE FUNCTION
+
+
+
+// CUSTOMER CHANGE EVENT MUST BE OUTSIDE FUNCTION
+
+document
+.getElementById("clientSelect")
+.addEventListener("change",function(){
+
+
+let index=this.value;
+
+
+if(index===""){
+return;
+}
+
+
+let client=clients[index];
+
+
+
+document.getElementById("clientType").value=
+client.type || "";
+
+
+document.getElementById("contact").value=
+client.contact || "";
+
+
+document.getElementById("address").value=
+client.address || "";
+
+
+
+// RATE LOADING
+
+SKUS.forEach(function(sku){
+
+
 document.getElementById(
-"skuTable"
-);
+"rate-"+sku
+).value =
+
+client.rates[sku] || "";
+
+
+});
+
+
+});
 
 
 
-tbody.innerHTML="";
 
+
+// CALCULATION FUNCTION
+
+function calculateSKU(sku){
+
+
+let whole=
+Number(
+document.getElementById("whole-"+sku).value
+)||0;
+
+
+let loose=
+Number(
+document.getElementById("loose-"+sku).value
+)||0;
+
+
+let rate=
+Number(
+document.getElementById("rate-"+sku).value
+)||0;
+
+
+
+let pack=
+Number(
+PACK_SIZE[sku]
+)||1;
+
+
+
+let qty=
+(whole*pack)+loose;
+
+
+
+let amount=
+(qty*rate)/pack;
+
+
+
+document.getElementById(
+"qty-"+sku
+).value=
+qty || "";
+
+
+
+document.getElementById(
+"amount-"+sku
+).value=
+amount ? amount.toFixed(2):"";
+
+
+}
+
+
+
+
+
+
+// SUBMIT FUNCTION
+
+async function submitOrder(){
+
+
+let index=
+document.getElementById("clientSelect").value;
+
+
+if(index===""){
+
+alert("Select Customer");
+return;
+
+}
+
+
+let client=clients[index];
+
+
+let orders={};
 
 
 SKUS.forEach(function(sku){
 
 
+orders[sku]={
 
-let row=
-document.createElement("tr");
+whole:
+document.getElementById("whole-"+sku).value,
 
+loose:
+document.getElementById("loose-"+sku).value,
 
+qty:
+document.getElementById("qty-"+sku).value,
 
-row.innerHTML=`
+rate:
+document.getElementById("rate-"+sku).value,
 
-<td>${sku}</td>
-
-
-<td>
-
-<input
-readonly
-type="number"
-id="rate-${sku}">
-
-</td>
+amount:
+document.getElementById("amount-"+sku).value
 
 
-<td>
-
-<input
-type="number"
-min="0"
-id="whole-${sku}"
-oninput="calculateSKU('${sku}')">
-
-</td>
-
-
-
-<td>
-
-<input
-type="number"
-min="0"
-id="loose-${sku}"
-oninput="calculateSKU('${sku}')">
-
-</td>
-
-
-
-<td>
-
-<input
-readonly
-id="qty-${sku}">
-
-</td>
-
-
-
-
-<td>
-
-<input
-readonly
-class="amount"
-id="amount-${sku}">
-
-</td>
-
-`;
-
-
-
-tbody.appendChild(row);
+};
 
 
 });
 
+
+
+let data={
+
+
+name:client.name,
+
+type:client.type,
+
+contact:client.contact,
+
+address:client.address,
+
+orders:orders
+
+
+};
+
+
+
+await fetch(
+API_URL,
+{
+method:"POST",
+mode:"no-cors",
+headers:{
+"Content-Type":"text/plain;charset=utf-8"
+},
+body:JSON.stringify(data)
+}
+);
+
+
+
+document.getElementById("message").innerHTML=
+"Order Submitted";
+
+
+}
 
 
 }
