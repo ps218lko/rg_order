@@ -13,14 +13,11 @@
 <style>
 
 body{
-
 font-family:Arial,sans-serif;
 background:#f4f6f8;
 margin:0;
 padding:20px;
-
 }
-
 
 
 .container,
@@ -36,14 +33,12 @@ box-shadow:0 3px 15px rgba(0,0,0,0.1);
 }
 
 
-
 .login-container{
 
 max-width:400px;
 margin:60px auto;
 
 }
-
 
 
 h1{
@@ -53,7 +48,6 @@ text-align:center;
 }
 
 
-
 label{
 
 display:block;
@@ -61,7 +55,6 @@ font-weight:bold;
 margin-top:15px;
 
 }
-
 
 
 input,
@@ -77,10 +70,9 @@ border-radius:6px;
 }
 
 
-
 input[readonly]{
 
-background:#eeeeee;
+background:#eee;
 
 }
 
@@ -93,7 +85,6 @@ border-collapse:collapse;
 margin-top:25px;
 
 }
-
 
 
 th,
@@ -211,12 +202,9 @@ padding:5px;
 }
 
 
-
 </style>
 
-
 </head>
-
 
 
 <body>
@@ -228,8 +216,7 @@ padding:5px;
 <!-- ========================= -->
 
 
-<div id="loginPage"
-class="login-container">
+<div id="loginPage" class="login-container">
 
 
 <h1>
@@ -246,10 +233,7 @@ Username
 <input
 id="username"
 type="text"
-placeholder="Enter username"
-autocomplete="username">
-
-
+placeholder="Enter username">
 
 
 
@@ -261,10 +245,7 @@ Password
 <input
 id="password"
 type="password"
-placeholder="Enter password"
-autocomplete="current-password">
-
-
+placeholder="Enter password">
 
 
 
@@ -278,13 +259,17 @@ Login
 
 
 
-
 <div id="loginMessage">
 
 </div>
 
 
 </div>
+
+
+
+
+
 <!-- ========================= -->
 <!-- ORDER PAGE -->
 <!-- ========================= -->
@@ -298,7 +283,8 @@ Login
 
 <div class="user-welcome">
 
-Welcome 
+Welcome
+
 <strong id="loggedInName"></strong>
 
 </div>
@@ -315,11 +301,9 @@ Logout
 
 
 
-
 <h1>
 Customer Order Form
 </h1>
-
 
 
 
@@ -377,10 +361,10 @@ readonly>
 
 
 
-
 <h2>
 Order Details
 </h2>
+
 
 
 
@@ -400,15 +384,20 @@ Order Details
 
 </tr>
 
+
 </thead>
+
 
 
 <tbody id="skuTable">
 
+
 </tbody>
 
 
+
 </table>
+
 
 
 
@@ -429,15 +418,10 @@ Submit Order
 </div>
 
 
-
 </div>
 
 
 </div>
-
-
-
-
 
 <script>
 
@@ -448,7 +432,6 @@ Submit Order
 
 
 const API_URL =
-
 "https://script.google.com/macros/s/AKfycbycaik6xQycLiRYZLe5-KeJqzguETBXDs4QHEZ-VvdEC3R6VS3WayqtqKcsX3EuyCXY/exec";
 
 
@@ -468,10 +451,8 @@ const SKUS=[
 "RG17.0G",
 "RG100.0G",
 
-
 "RGS2.20G",
 "RGM1.50G",
-
 
 "TZ0.25G",
 "TZ0.45G",
@@ -479,10 +460,8 @@ const SKUS=[
 "TZ10.0G",
 "TZ50.0G",
 
-
 "KH5.75G",
 "KH30.0G"
-
 
 ];
 
@@ -505,17 +484,14 @@ let PACK_SIZE={
 "RG17.0G":20,
 "RG100.0G":20,
 
-
 "RGS2.20G":20,
 "RGM1.50G":20,
-
 
 "TZ0.25G":20,
 "TZ0.45G":20,
 "TZ4.25G":20,
 "TZ10.0G":20,
 "TZ50.0G":20,
-
 
 "KH5.75G":20,
 "KH30.0G":20
@@ -526,11 +502,9 @@ let PACK_SIZE={
 
 
 
-
 let clients=[];
 
 let loggedInUser=null;
-
 
 
 
@@ -544,16 +518,17 @@ let loggedInUser=null;
 function loginUser(){
 
 
-let username=
-document.getElementById("username").value.trim();
+const username=
+document.getElementById("username")
+.value.trim();
 
 
-let password=
-document.getElementById("password").value.trim();
+const password=
+document.getElementById("password")
+.value.trim();
 
 
-
-let message=
+const message=
 document.getElementById("loginMessage");
 
 
@@ -562,12 +537,14 @@ if(username==="" || password===""){
 
 
 message.innerHTML=
-"Enter username and password";
+"Please enter username and password";
+
 
 return;
 
 
 }
+
 
 
 
@@ -581,7 +558,10 @@ const callbackName=
 
 
 
+
+
 window[callbackName]=function(result){
+
 
 
 if(result.success){
@@ -598,6 +578,7 @@ name:result.name
 
 
 
+
 sessionStorage.setItem(
 
 "rgLoggedInUser",
@@ -609,9 +590,12 @@ JSON.stringify(loggedInUser)
 
 
 
+
 document.getElementById(
 "loggedInName"
-).innerHTML=result.name;
+).innerHTML=
+result.name;
+
 
 
 
@@ -624,6 +608,7 @@ document.getElementById(
 document.getElementById(
 "orderPage"
 ).style.display="block";
+
 
 
 
@@ -655,6 +640,7 @@ delete window[callbackName];
 
 
 
+
 let script=document.createElement("script");
 
 
@@ -665,12 +651,14 @@ API_URL+
 
 "?action=login"+
 
-"&username="+encodeURIComponent(username)+
+"&username="+
+encodeURIComponent(username)+
 
-"&password="+encodeURIComponent(password)+
+"&password="+
+encodeURIComponent(password)+
 
-"&callback="+callbackName;
-
+"&callback="+
+callbackName;
 
 
 
@@ -685,12 +673,14 @@ document.body.appendChild(script);
 
 
 
+
 // =====================================================
 // CHECK SAVED LOGIN
 // =====================================================
 
 
 window.onload=function(){
+
 
 
 let saved=
@@ -701,6 +691,7 @@ sessionStorage.getItem(
 
 
 if(saved){
+
 
 
 loggedInUser=
@@ -743,6 +734,8 @@ loadClients();
 
 
 
+
+
 // =====================================================
 // LOGOUT
 // =====================================================
@@ -751,15 +744,20 @@ loadClients();
 function logoutUser(){
 
 
+
 sessionStorage.removeItem(
 "rgLoggedInUser"
 );
 
 
+
 location.reload();
 
 
+
 }
+
+
 
 
 
@@ -773,10 +771,12 @@ location.reload();
 async function loadClients(){
 
 
+
 try{
 
 
-let response=
+
+const response=
 await fetch(API_URL);
 
 
@@ -786,19 +786,33 @@ await response.json();
 
 
 
-let select=
+if(!Array.isArray(clients)){
+
+
+throw new Error(
+"Invalid customer data"
+);
+
+
+}
+
+
+
+
+const select=
 document.getElementById(
 "clientSelect"
 );
 
 
 
-select.innerHTML=
 
-`
+select.innerHTML=`
+
 <option value="">
 Select Customer
 </option>
+
 `;
 
 
@@ -807,12 +821,14 @@ Select Customer
 clients.forEach(function(client,index){
 
 
+
 let option=
 document.createElement("option");
 
 
 
 option.value=index;
+
 
 option.textContent=
 client.name;
@@ -824,6 +840,8 @@ select.appendChild(option);
 
 
 });
+
+
 
 
 
@@ -852,270 +870,119 @@ document.getElementById(
 
 
 
+
+
 // =====================================================
 // CREATE SKU TABLE
 // =====================================================
 
-// CREATE TABLE
+
 function createSKUTable(){
 
-    const tbody=document.getElementById("skuTable");
-
-    tbody.innerHTML="";
-
-    SKUS.forEach(function(sku){
-
-        let row=document.createElement("tr");
-
-        row.innerHTML=`
-
-        <td>${sku}</td>
-
-        <td>
-        <input readonly id="rate-${sku}">
-        </td>
-
-        <td>
-        <input type="number"
-        id="whole-${sku}"
-        oninput="calculateSKU('${sku}')">
-        </td>
 
 
-        <td>
-        <input type="number"
-        id="loose-${sku}"
-        oninput="calculateSKU('${sku}')">
-        </td>
-
-
-        <td>
-        <input readonly id="qty-${sku}">
-        </td>
-
-
-        <td>
-        <input readonly id="amount-${sku}">
-        </td>
-
-        `;
-
-
-        tbody.appendChild(row);
-
-
-    });   // <---- CLOSE FOREACH
-
-
-}       // <---- CLOSE FUNCTION
-
-
-
-// CUSTOMER CHANGE EVENT MUST BE OUTSIDE FUNCTION
-
-document
-.getElementById("clientSelect")
-.addEventListener("change",function(){
-
-
-let index=this.value;
-
-
-if(index===""){
-return;
-}
-
-
-let client=clients[index];
-
-
-
-document.getElementById("clientType").value=
-client.type || "";
-
-
-document.getElementById("contact").value=
-client.contact || "";
-
-
-document.getElementById("address").value=
-client.address || "";
-
-
-
-// RATE LOADING
-
-SKUS.forEach(function(sku){
-
-
+const tbody=
 document.getElementById(
-"rate-"+sku
-).value =
-
-client.rates[sku] || "";
-
-
-});
-
-
-});
-
-
-
-
-
-// CALCULATION FUNCTION
-
-function calculateSKU(sku){
-
-
-let whole=
-Number(
-document.getElementById("whole-"+sku).value
-)||0;
-
-
-let loose=
-Number(
-document.getElementById("loose-"+sku).value
-)||0;
-
-
-let rate=
-Number(
-document.getElementById("rate-"+sku).value
-)||0;
-
-
-
-let pack=
-Number(
-PACK_SIZE[sku]
-)||1;
-
-
-
-let qty=
-(whole*pack)+loose;
-
-
-
-let amount=
-(qty*rate)/pack;
-
-
-
-document.getElementById(
-"qty-"+sku
-).value=
-qty || "";
-
-
-
-document.getElementById(
-"amount-"+sku
-).value=
-amount ? amount.toFixed(2):"";
-
-
-}
-
-
-
-
-
-
-// SUBMIT FUNCTION
-
-async function submitOrder(){
-
-
-let index=
-document.getElementById("clientSelect").value;
-
-
-if(index===""){
-
-alert("Select Customer");
-return;
-
-}
-
-
-let client=clients[index];
-
-
-let orders={};
-
-
-SKUS.forEach(function(sku){
-
-
-orders[sku]={
-
-whole:
-document.getElementById("whole-"+sku).value,
-
-loose:
-document.getElementById("loose-"+sku).value,
-
-qty:
-document.getElementById("qty-"+sku).value,
-
-rate:
-document.getElementById("rate-"+sku).value,
-
-amount:
-document.getElementById("amount-"+sku).value
-
-
-};
-
-
-});
-
-
-
-let data={
-
-
-name:client.name,
-
-type:client.type,
-
-contact:client.contact,
-
-address:client.address,
-
-orders:orders
-
-
-};
-
-
-
-await fetch(
-API_URL,
-{
-method:"POST",
-mode:"no-cors",
-headers:{
-"Content-Type":"text/plain;charset=utf-8"
-},
-body:JSON.stringify(data)
-}
+"skuTable"
 );
 
 
 
-document.getElementById("message").innerHTML=
-"Order Submitted";
+tbody.innerHTML="";
+
+
+
+
+
+SKUS.forEach(function(sku){
+
+
+
+let row=
+document.createElement("tr");
+
+
+
+
+row.innerHTML=`
+
+<td>${sku}</td>
+
+
+<td>
+
+<input
+type="number"
+readonly
+id="rate-${sku}">
+
+</td>
+
+
+
+<td>
+
+<input
+type="number"
+min="0"
+id="whole-${sku}"
+oninput="calculateSKU('${sku}')">
+
+</td>
+
+
+
+
+<td>
+
+<input
+type="number"
+min="0"
+id="loose-${sku}"
+oninput="calculateSKU('${sku}')">
+
+</td>
+
+
+
+
+<td>
+
+<input
+readonly
+id="qty-${sku}">
+
+</td>
+
+
+
+
+<td>
+
+<input
+readonly
+class="amount"
+id="amount-${sku}">
+
+</td>
+
+
+`;
+
+
+
+
+tbody.appendChild(row);
+
+
+
+});
+
 
 
 }
+    
 
-
-}
 // =====================================================
 // CUSTOMER SELECT CHANGE
 // =====================================================
@@ -1128,7 +995,8 @@ document
 function(){
 
 
-let index=this.value;
+
+const index=this.value;
 
 
 
@@ -1147,7 +1015,10 @@ return;
 
 
 
-let client=clients[index];
+
+
+const client=clients[index];
+
 
 
 
@@ -1171,26 +1042,29 @@ client.address || "";
 
 
 
-// ==============================
-// LOAD CUSTOMER RATE
-// ==============================
+
+
+// =====================================================
+// LOAD CUSTOMER WISE RATE
+// =====================================================
 
 
 SKUS.forEach(function(sku){
 
 
 
-let rate=0;
+let rate="";
 
 
 
-if(client.rates && client.rates[sku]){
+if(client.rates && client.rates[sku] !== undefined){
 
 
 rate=client.rates[sku];
 
 
 }
+
 
 
 
@@ -1222,7 +1096,7 @@ function calculateSKU(sku){
 
 
 
-let whole=
+const whole=
 
 Number(
 document.getElementById(
@@ -1233,7 +1107,8 @@ document.getElementById(
 
 
 
-let loose=
+
+const loose=
 
 Number(
 document.getElementById(
@@ -1245,7 +1120,8 @@ document.getElementById(
 
 
 
-let pack=
+
+const pack=
 
 Number(
 PACK_SIZE[sku]
@@ -1254,7 +1130,9 @@ PACK_SIZE[sku]
 
 
 
-let rate=
+
+
+const rate=
 
 Number(
 document.getElementById(
@@ -1266,32 +1144,38 @@ document.getElementById(
 
 
 
-// Total Quantity in loose units
 
 
-let qty=
+// TOTAL LOOSE QUANTITY
+
+
+const qty=
 
 (whole * pack) + loose;
 
 
 
 
-// Rate per loose
+
+// RATE PER LOOSE
 
 
-let looseRate=
+const looseRate=
 
 rate / pack;
 
 
 
 
-// Amount
+
+// AMOUNT
 
 
-let amount=
+const amount=
 
 qty * looseRate;
+
+
 
 
 
@@ -1305,6 +1189,7 @@ qty || "";
 
 
 
+
 document.getElementById(
 "amount-"+sku
 ).value=
@@ -1313,7 +1198,9 @@ amount ? amount.toFixed(2) : "";
 
 
 
+
 }
+
 
 
 
@@ -1331,7 +1218,7 @@ async function submitOrder(){
 
 
 
-let index=
+const index=
 
 document.getElementById(
 "clientSelect"
@@ -1356,9 +1243,11 @@ return;
 
 
 
-let client=
 
+
+const client=
 clients[index];
+
 
 
 
@@ -1371,15 +1260,18 @@ let hasOrder=false;
 
 
 
+
 SKUS.forEach(function(sku){
 
 
 
-let qty=
+const qty=
 
 document.getElementById(
 "qty-"+sku
 ).value;
+
+
 
 
 
@@ -1390,6 +1282,8 @@ hasOrder=true;
 
 
 }
+
+
 
 
 
@@ -1405,6 +1299,7 @@ document.getElementById(
 
 
 
+
 loose:
 
 document.getElementById(
@@ -1413,7 +1308,9 @@ document.getElementById(
 
 
 
+
 qty:qty,
+
 
 
 
@@ -1425,6 +1322,7 @@ document.getElementById(
 
 
 
+
 amount:
 
 document.getElementById(
@@ -1432,7 +1330,9 @@ document.getElementById(
 ).value || ""
 
 
+
 };
+
 
 
 
@@ -1462,7 +1362,7 @@ return;
 
 
 
-let data={
+const data={
 
 
 
@@ -1470,16 +1370,20 @@ name:
 client.name,
 
 
+
 type:
 client.type,
+
 
 
 contact:
 client.contact,
 
 
+
 address:
 client.address,
+
 
 
 orders:orders
@@ -1493,7 +1397,8 @@ orders:orders
 
 
 
-let message=
+
+const message=
 
 document.getElementById(
 "message"
@@ -1501,11 +1406,13 @@ document.getElementById(
 
 
 
-let button=
+
+const button=
 
 document.getElementById(
 "submitButton"
 );
+
 
 
 
@@ -1532,7 +1439,6 @@ await fetch(
 API_URL,
 
 {
-
 
 method:"POST",
 
@@ -1568,8 +1474,8 @@ JSON.stringify(data)
 
 
 
-message.innerHTML=
 
+message.innerHTML=
 "Order submitted successfully";
 
 
@@ -1578,7 +1484,7 @@ message.innerHTML=
 
 
 
-// CLEAR FORM
+// CLEAR AFTER SUBMIT
 
 
 SKUS.forEach(function(sku){
@@ -1615,6 +1521,7 @@ document.getElementById(
 
 
 
+
 }
 
 catch(error){
@@ -1626,14 +1533,11 @@ console.log(error);
 
 
 message.innerHTML=
-
 "Order submission failed";
 
 
 
 }
-
-
 
 finally{
 
@@ -1646,3 +1550,14 @@ button.disabled=false;
 
 
 }
+
+
+
+
+
+</script>
+
+
+</body>
+
+</html>
